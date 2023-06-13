@@ -1,5 +1,6 @@
 import 'package:ascoop/services/auth/auth_service.dart';
 import 'package:ascoop/services/database/data_account_history.dart';
+import 'package:ascoop/services/database/data_capital_history.dart';
 import 'package:ascoop/services/database/data_coop.dart' as datacoop;
 import 'package:ascoop/services/database/data_coop_acc.dart';
 import 'package:ascoop/services/database/data_fcm.dart';
@@ -460,7 +461,53 @@ class FirestoreDataProvider implements DataProvider {
         return 0;
       }
     } catch (e) {
-      print(e.toString());
+      throw UnimplementedError;
+    }
+  }
+
+  @override
+  Future<double> getSavings(
+      {required String coopId, required String userId}) async {
+    // TODO: implement getSavings
+    try {
+      final coopData = FirebaseFirestore.instance
+          .collection('subscribers')
+          .doc('${coopId}_$userId')
+          .collection('coopAccDetails')
+          .doc('Data');
+
+      final snapshot = await coopData.get();
+
+      if (snapshot.exists) {
+        DataCoopAcc acc = DataCoopAcc.fromJson(snapshot.data()!);
+        return acc.savings;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      throw UnimplementedError;
+    }
+  }
+
+  @override
+  Future<DataCoopAcc?> getCoopAcc(
+      {required String coopId, required String userId}) async {
+    // TODO: implement getCoopAcc
+    try {
+      final coopData = FirebaseFirestore.instance
+          .collection('subscribers')
+          .doc('${coopId}_$userId')
+          .collection('coopAccDetails')
+          .doc('Data');
+
+      final snapshot = await coopData.get();
+
+      if (snapshot.exists) {
+        return DataCoopAcc.fromJson(snapshot.data()!);
+      } else {
+        return null;
+      }
+    } catch (e) {
       throw UnimplementedError;
     }
   }
@@ -533,8 +580,37 @@ class FirestoreDataProvider implements DataProvider {
   Stream<List<DataSubscription>> readAllSubs() => FirebaseFirestore.instance
       .collection('subscribers')
       .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .where('status', isEqualTo: 'verified')
       .snapshots()
       .map((snapshot) => snapshot.docs
           .map((doc) => DataSubscription.fromJson(doc.data()))
           .toList());
+
+  @override
+  Stream<List<DataCapitalShareHistory>> getCapitalShareHistory(
+          {required String coopId, required String userId}) =>
+      FirebaseFirestore.instance
+          .collection('subscribers')
+          .doc('${coopId}_$userId')
+          .collection('coopAccDetails')
+          .doc('Data')
+          .collection('shareLedger')
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => DataCapitalShareHistory.fromJson(doc.data()))
+              .toList());
+
+  @override
+  Stream<List<DataCapitalShareHistory>> getSavingsHistory(
+          {required String coopId, required String userId}) =>
+      FirebaseFirestore.instance
+          .collection('subscribers')
+          .doc('${coopId}_$userId')
+          .collection('coopAccDetails')
+          .doc('Data')
+          .collection('savingsLedger')
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => DataCapitalShareHistory.fromJson(doc.data()))
+              .toList());
 }

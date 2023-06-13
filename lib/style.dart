@@ -14,6 +14,18 @@ const TitleTextStyle = TextStyle(
     fontSize: LargeTextSize,
     color: Colors.black);
 
+const CashTextStyle = TextStyle(
+    fontFamily: FontNameDefault,
+    fontWeight: FontWeight.bold,
+    fontSize: LargeTextSize,
+    color: Colors.black);
+
+const CashMediumTextStyle = TextStyle(
+    fontFamily: FontNameDefault,
+    fontWeight: FontWeight.w400,
+    fontSize: MediumTextSize,
+    color: Colors.black);
+
 const BodyHntTextStyle = TextStyle(
     fontFamily: FontNameDefault,
     fontWeight: FontWeight.w300,

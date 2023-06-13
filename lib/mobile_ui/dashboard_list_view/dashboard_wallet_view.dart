@@ -2,6 +2,7 @@ import 'package:ascoop/services/database/data_coop.dart';
 import 'package:ascoop/services/database/data_service.dart';
 import 'package:ascoop/services/database/data_subscription.dart';
 import 'package:ascoop/style.dart';
+import 'package:ascoop/utilities/view_wallet_options.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -87,7 +88,18 @@ class _DashboardWalletState extends State<DashboardWallet> {
                                           shrinkWrap: true,
                                           itemCount: subs.length,
                                           itemBuilder: (context, index) =>
-                                              buildWallet(size, subs[index]));
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    ShowWalletViewOption(
+                                                            context: context,
+                                                            coopId: subs[index]
+                                                                .coopId,
+                                                            userId: subs[index]
+                                                                .userId)
+                                                        .showOptionDialog();
+                                                  },
+                                                  child: buildWallet(
+                                                      size, subs[index])));
                                     } else if (snapshot.hasError &&
                                         snapshot.connectionState ==
                                             ConnectionState.active) {
@@ -123,7 +135,7 @@ class _DashboardWalletState extends State<DashboardWallet> {
         elevation: 8,
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         child: Container(
-          height: screenHeight * 0.1,
+          height: screenHeight * 0.15,
           margin: const EdgeInsets.all(20),
           decoration: const BoxDecoration(
               // color: Color.fromARGB(153, 237, 241, 242),
@@ -192,6 +204,37 @@ class _DashboardWalletState extends State<DashboardWallet> {
               FutureBuilder<double>(
                 future: DataService.database()
                     .getCapitalShare(coopId: coop.coopID, userId: subs.userId),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final accData = snapshot.data!;
+
+                    // return SizedBox(
+                    //     height: size.height * 0.5,
+                    //     width: size.width,
+                    //     child: ListView.builder(
+                    //       scrollDirection: Axis.vertical,
+                    //       itemCount: notif.length,
+                    //       itemBuilder: (context, index) =>
+                    //           paymentSchedule(notif[index]),
+                    //     ));
+
+                    return Center(
+                      child: Text('Php${ocCy.format(accData.toDouble())}'),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Php${ocCy.format(0.0)}');
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+              const Text(
+                'Savings:',
+                style: DashboardNormalTextStyle,
+              ),
+              FutureBuilder<double>(
+                future: DataService.database()
+                    .getSavings(coopId: coop.coopID, userId: subs.userId),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final accData = snapshot.data!;

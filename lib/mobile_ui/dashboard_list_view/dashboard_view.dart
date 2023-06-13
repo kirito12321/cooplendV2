@@ -1,10 +1,12 @@
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_settings_view.dart';
+import 'package:ascoop/services/auth/auth_service.dart';
 import 'package:ascoop/services/database/data_service.dart';
 import 'package:ascoop/services/database/data_user_notification.dart';
 import 'package:ascoop/style.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_cooppage_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_homepage_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_loanpage_view.dart';
+import 'package:ascoop/utilities/show_confirmation_dialog.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 
@@ -79,182 +81,201 @@ class _DashboardState extends State<Dashboard> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        // currentScreen = const DashboardHome();
-                        currentTab = 0;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.home_outlined,
-                          color:
-                              currentTab == 0 ? selectedColor : unSelectedColor,
-                        ),
-                        Text(
-                          'Dashboard',
-                          style: TextStyle(
-                              color: currentTab == 0
-                                  ? selectedColor
-                                  : unSelectedColor),
-                        )
-                      ],
+              Transform.scale(
+                scale: 0.9,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MaterialButton(
+                      minWidth: 40,
+                      onPressed: () {
+                        setState(() {
+                          // currentScreen = const DashboardHome();
+                          currentTab = 0;
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.home_outlined,
+                            color: currentTab == 0
+                                ? selectedColor
+                                : unSelectedColor,
+                          ),
+                          Text(
+                            'Dashboard',
+                            style: TextStyle(
+                                color: currentTab == 0
+                                    ? selectedColor
+                                    : unSelectedColor),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        // currentScreen = const LoanPage();
-                        currentTab = 1;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.list_alt_outlined,
-                          color:
-                              currentTab == 1 ? selectedColor : unSelectedColor,
-                        ),
-                        Text(
-                          'Loans',
-                          style: TextStyle(
-                              color: currentTab == 1
-                                  ? selectedColor
-                                  : unSelectedColor),
-                        )
-                      ],
+                    MaterialButton(
+                      minWidth: 40,
+                      onPressed: () {
+                        setState(() {
+                          // currentScreen = const LoanPage();
+                          currentTab = 1;
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.list_alt_outlined,
+                            color: currentTab == 1
+                                ? selectedColor
+                                : unSelectedColor,
+                          ),
+                          Text(
+                            'Loans',
+                            style: TextStyle(
+                                color: currentTab == 1
+                                    ? selectedColor
+                                    : unSelectedColor),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        // currentScreen = const DashboardNotification();
-                        currentTab = 2;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        StreamBuilder<List<DataUserNotification>>(
-                          stream: DataService.database().checkUserUnreadNotif(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              final notif = snapshot.data!;
-                              return notif.isNotEmpty
-                                  ? badges.Badge(
-                                      position: badges.BadgePosition.topEnd(),
-                                      badgeAnimation:
-                                          const badges.BadgeAnimation.fade(
-                                              animationDuration:
-                                                  Duration(milliseconds: 5000),
-                                              loopAnimation: false),
-                                      badgeContent: notif.length > 10
-                                          ? const Text(
-                                              '10+',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            )
-                                          : Text(
-                                              notif.length.toString(),
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                      child: Icon(
+              Transform.scale(
+                scale: 0.9,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MaterialButton(
+                      minWidth: 40,
+                      onPressed: () {
+                        setState(() {
+                          // currentScreen = const DashboardNotification();
+                          currentTab = 2;
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          StreamBuilder<List<DataUserNotification>>(
+                            stream:
+                                DataService.database().checkUserUnreadNotif(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final notif = snapshot.data!;
+                                return notif.isNotEmpty
+                                    ? badges.Badge(
+                                        position: badges.BadgePosition.topEnd(),
+                                        badgeAnimation:
+                                            const badges.BadgeAnimation.fade(
+                                                animationDuration: Duration(
+                                                    milliseconds: 5000),
+                                                loopAnimation: false),
+                                        badgeContent: notif.length > 10
+                                            ? const Text(
+                                                '10+',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              )
+                                            : Text(
+                                                notif.length.toString(),
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                        child: Icon(
+                                          Icons.notifications_outlined,
+                                          color: currentTab == 2
+                                              ? selectedColor
+                                              : unSelectedColor,
+                                        ),
+                                      )
+                                    : Icon(
                                         Icons.notifications_outlined,
                                         color: currentTab == 2
                                             ? selectedColor
                                             : unSelectedColor,
-                                      ),
-                                    )
-                                  : Icon(
-                                      Icons.notifications_outlined,
-                                      color: currentTab == 2
-                                          ? selectedColor
-                                          : unSelectedColor,
-                                    );
-                            } else if (snapshot.hasError) {
-                              return Text(
-                                  'there is something error! ${snapshot.hasError.toString()}');
-                            } else {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                          },
-                        ),
-                        // numNotif != null && numNotif != 0
-                        //     ? Badge(
-                        //         position: BadgePosition.topEnd(),
-                        //         animationDuration:
-                        //             const Duration(milliseconds: 5000),
-                        //         animationType: BadgeAnimationType.slide,
-                        //         badgeContent: Text(
-                        //           numNotif.toString(),
-                        //           style: const TextStyle(color: Colors.white),
-                        //         ),
-                        //         child: Icon(
-                        //           Icons.notifications_outlined,
-                        //           color: currentTab == 2
-                        //               ? selectedColor
-                        //               : unSelectedColor,
-                        //         ),
-                        //       )
-                        //     : Icon(
-                        //         Icons.notifications_outlined,
-                        //         color: currentTab == 2
-                        //             ? selectedColor
-                        //             : unSelectedColor,
-                        //       ),
-                        Text(
-                          'Notifications',
-                          style: TextStyle(
-                              color: currentTab == 2
-                                  ? selectedColor
-                                  : unSelectedColor),
-                        )
-                      ],
+                                      );
+                              } else if (snapshot.hasError) {
+                                return Text(
+                                    'there is something error! ${snapshot.hasError.toString()}');
+                              } else {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                            },
+                          ),
+                          // numNotif != null && numNotif != 0
+                          //     ? Badge(
+                          //         position: BadgePosition.topEnd(),
+                          //         animationDuration:
+                          //             const Duration(milliseconds: 5000),
+                          //         animationType: BadgeAnimationType.slide,
+                          //         badgeContent: Text(
+                          //           numNotif.toString(),
+                          //           style: const TextStyle(color: Colors.white),
+                          //         ),
+                          //         child: Icon(
+                          //           Icons.notifications_outlined,
+                          //           color: currentTab == 2
+                          //               ? selectedColor
+                          //               : unSelectedColor,
+                          //         ),
+                          //       )
+                          //     : Icon(
+                          //         Icons.notifications_outlined,
+                          //         color: currentTab == 2
+                          //             ? selectedColor
+                          //             : unSelectedColor,
+                          //       ),
+                          Text(
+                            'Notifications',
+                            style: TextStyle(
+                                color: currentTab == 2
+                                    ? selectedColor
+                                    : unSelectedColor),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        // currentScreen = const Text('Undermaintenance');
-                        currentTab = 3;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.settings_outlined,
-                            color: currentTab == 3
-                                ? selectedColor
-                                : unSelectedColor),
-                        Text(
-                          'Settings',
-                          style: TextStyle(
+                    MaterialButton(
+                      minWidth: 40,
+                      onPressed: () {
+                        ShowConfirmationDialog(
+                                context: context,
+                                title: 'Logout Confirmation',
+                                body: 'Are you sure you want to logout?',
+                                fBtnName: 'Yes',
+                                sBtnName: 'No')
+                            .showConfirmationDialog()
+                            .then((value) {
+                          if (value!) {
+                            AuthService.firebase().logOut().then((value) =>
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/login/', (route) => false));
+                          }
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.logout_outlined,
                               color: currentTab == 3
                                   ? selectedColor
                                   : unSelectedColor),
-                        )
-                      ],
+                          Text(
+                            'Logout',
+                            style: TextStyle(
+                                color: currentTab == 3
+                                    ? selectedColor
+                                    : unSelectedColor),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
             ],
           ),

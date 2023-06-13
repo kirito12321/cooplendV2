@@ -242,15 +242,17 @@ class _DashboardHomeState extends State<DashboardHome> {
                                             ),
                                           ),
                                         ),
-                                        const Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Login and Security'),
-                                            Text('Change Password')
-                                          ],
+                                        const Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Login and Security'),
+                                              Text('Change Password')
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -279,16 +281,18 @@ class _DashboardHomeState extends State<DashboardHome> {
                                           ),
                                         ),
                                       ),
-                                      const Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Notification'),
-                                          Text(
-                                              'Managing notification sent to you')
-                                        ],
+                                      const Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Notification'),
+                                            Text(
+                                                'Managing notification sent to you')
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -325,15 +329,18 @@ class _DashboardHomeState extends State<DashboardHome> {
                                             ),
                                           ),
                                         ),
-                                        const Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Wallet'),
-                                            Text('Check capital share balance')
-                                          ],
+                                        const Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Wallet'),
+                                              Text(
+                                                  'Check capital share balance')
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),

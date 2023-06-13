@@ -114,11 +114,6 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
               child: Stepper(
                 type: StepperType.horizontal,
                 steps: getSteps(),
-                onStepTapped: (int newIndex) {
-                  setState(() {
-                    _currentStep = newIndex;
-                  });
-                },
                 currentStep: _currentStep,
                 onStepContinue: () {
                   final isLastStep = _currentStep == 3;
@@ -281,7 +276,11 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
         Step(
             state: _currentStep > 0 ? StepState.complete : StepState.indexed,
             isActive: _currentStep >= 0,
-            title: const Text('1st step'),
+            title: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '1st',
+                )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -349,13 +348,17 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
         Step(
             state: _currentStep > 1 ? StepState.complete : StepState.indexed,
             isActive: _currentStep >= 1,
-            title: const Text('2nd step'),
+            title: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '2nd',
+                )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: const Text(
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
                     'Please take a picture of your valid ID, and send it here',
                     style: SubsccriptionTextStyle,
                   ),
@@ -417,7 +420,11 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
         Step(
             state: _currentStep > 2 ? StepState.complete : StepState.indexed,
             isActive: _currentStep >= 2,
-            title: const Text('3rd step'),
+            title: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '3rd',
+                )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -484,7 +491,11 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
             )),
         Step(
             isActive: _currentStep >= 3,
-            title: const Text('Subscribe'),
+            title: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'final',
+                )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

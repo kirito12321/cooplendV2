@@ -17,7 +17,7 @@ class PaymentDataModel {
   });
 
   String merchantId;
-  int invoiceNo;
+  String invoiceNo;
   String name;
   String email;
   double amount;

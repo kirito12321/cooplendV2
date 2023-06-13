@@ -12,6 +12,7 @@ class DataLoanTenure {
   final String? payMethod;
   final DateTime dueDate;
   final int month;
+  final double? penalty;
 
   DataLoanTenure(
       {required this.loanId,
@@ -24,7 +25,8 @@ class DataLoanTenure {
       required this.payment,
       this.payMethod,
       required this.dueDate,
-      required this.month});
+      required this.month,
+      this.penalty});
 
   static DataLoanTenure fromJson(Map<String, dynamic> json) => DataLoanTenure(
       loanId: json['loanId'],
@@ -40,5 +42,7 @@ class DataLoanTenure {
           json['payment'] != null ? (json['payment'] as num).toDouble() : 0,
       payMethod: json['payMethod'] ?? ' ',
       dueDate: (json['dueDate'] as Timestamp).toDate(),
-      month: json['month'] ?? 0);
+      month: json['month'] ?? 0,
+      penalty:
+          json['penalty'] != null ? (json['penalty'] as num).toDouble() : 0.0);
 }

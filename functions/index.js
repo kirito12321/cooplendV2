@@ -118,10 +118,11 @@ exports.loanReqUpdateNotif = functions.firestore
             if (docRef.exists) {
                 const coopData = coopRef.data();
                 const token = docRef.data();
+                cNotifID = db.collection('users').doc(loan.userId).collection('user_notifications').doc().id;
 
                 const userNotif = {
                     userId: loan.userId,
-                    notifID: db.collection('users').doc(loan.userId).collection('user_notifications').doc().id,
+                    notifID: cNotifID,
                     notifTitle: coopData.coopName,
                     notifText: 'Your loan request is' + loan.loanStatus,
                     timestamp: admin.firestore.FieldValue.serverTimestamp(),
@@ -137,6 +138,7 @@ exports.loanReqUpdateNotif = functions.firestore
                         body: "Your laon is now " + loan.loanStatus,
                     },
                     data: {
+                        notifID: cNotifID,
                         priority: "high",
                         timeToLive: "60 * 60* 24",
                     },
@@ -179,10 +181,11 @@ exports.subsUpdateNotif = functions.firestore
             if (docRef.exists) {
                 const coopData = coopRef.data();
                 const token = docRef.data();
+                cNotifID = db.collection('users').doc(subs.userId).collection('user_notifications').doc().id;
 
                 const userNotif = {
                     userId: subs.userId,
-                    notifID: db.collection('users').doc(subs.userId).collection('user_notifications').doc().id,
+                    notifID: cNotifID,
                     notifTitle: coopData.coopName,
                     notifText: 'Your subscription request is' + subs.status,
                     timestamp: admin.firestore.FieldValue.serverTimestamp(),
@@ -198,6 +201,7 @@ exports.subsUpdateNotif = functions.firestore
                         body: "Your subscription request is " + subs.status,
                     },
                     data: {
+                        notifID: cNotifID,
                         priority: "high",
                         timeToLive: "60 * 60* 24",
                     },
@@ -346,7 +350,7 @@ exports.paymentOnCreateTriggers = functions.firestore
     .document('payment/{paymentId}')
     .onCreate(async (doc) => {
 
-        const paymentData = doc.data;
+        const paymentData = doc.data();
 
         var amount = 0;
 
@@ -362,12 +366,12 @@ exports.paymentOnCreateTriggers = functions.firestore
             const coopData = coopRef.data();
             const token = docRef.data();
             amount = paymentData.amount
-
+            cNotifID = db.collection('users').doc(paymentData.payerId).collection('user_notifications').doc().id;
             const userNotif = {
                 userId: paymentData.payerId,
-                notifID: db.collection('users').doc(paymentData.payerId).collection('user_notifications').doc().id,
+                notifID: cNotifID,
                 notifTitle: coopData.coopName,
-                notifText: 'Your payment applicable for the loan code: ',
+                notifText: 'Your payment applicable for the loan code: ' + paymentData.loanId + 'in the month of ' + paymentData.dueDate.toDate().getMonth() + paymentData.dueDate.toDate().getFullYear() + ' with total amount of ' + amount.toLocaleString('en-PH', { style: 'currency', currency: 'PHP', decimals: 2 }) + '. It will be process on 2 business days',
                 timestamp: admin.firestore.FieldValue.serverTimestamp(),
                 notifImageUrl: '',
                 iconUrl: coopData.profilePic,
@@ -378,9 +382,10 @@ exports.paymentOnCreateTriggers = functions.firestore
                 notification: {
                     // title: subs.coopId + '_' + subs.userId,
                     title: coopData.coopName,
-                    body: 'Your payment applicable for the loan code: ',
+                    body: 'Your payment applicable for the loan code: ' + paymentData.loanId,
                 },
                 data: {
+                    notifID: cNotifID,
                     priority: "high",
                     timeToLive: "60 * 60* 24",
                 },
@@ -403,8 +408,8 @@ exports.paymentOnCreateTriggers = functions.firestore
 exports.paymentOnUpdateTriggers = functions.firestore
     .document('payment/{paymentId}')
     .onUpdate(async (doc) => {
-        const paymentData = doc.before.data;
-        const newPaymentData = doc.after.data;
+        const paymentData = doc.before.data();
+        const newPaymentData = doc.after.data();
 
         var amount = 0;
 
@@ -419,7 +424,7 @@ exports.paymentOnUpdateTriggers = functions.firestore
         }
 
 
-        if (newPaymentData == 'paid') {
+        if (newPaymentData.payStatus == 'paid') {
 
             const updateTenureData = {
                 coopId: newPaymentData.coopId,
@@ -435,11 +440,11 @@ exports.paymentOnUpdateTriggers = functions.firestore
                 const coopData = coopRef.data();
                 const token = docRef.data();
                 amount = newPaymentData.amount
-
+                cNotifID = db.collection('users').doc(newPaymentData.payerId).collection('user_notifications').doc().id;
 
                 const userNotif = {
                     userId: newPaymentData.payerId,
-                    notifID: db.collection('users').doc(newPaymentData.payerId).collection('user_notifications').doc().id,
+                    notifID: cNotifID,
                     notifTitle: coopData.coopName,
                     notifText: 'Your payment in the month of ' + newPaymentData.timestamp.toDate().getMonth() + ' ' + paymentData.dueDate.toDate.getFullYear() + ' with total amount of ' + amount.toLocaleString('en_PH', { style: 'currency', currency: 'PHP' }) + ' has been accepted and updated your tenure',
                     timestamp: admin.firestore.FieldValue.serverTimestamp(),
@@ -452,9 +457,10 @@ exports.paymentOnUpdateTriggers = functions.firestore
                     notification: {
                         // title: subs.coopId + '_' + subs.userId,
                         title: coopData.coopName,
-                        body: 'Your payment in the month of ' + newPaymentData.timestamp.toDate().getMonth() + ' ' + paymentData.dueDate.toDate.getFullYear() + ' with total amount of ' + amount.toLocaleString('en_PH', { style: 'currency', currency: 'PHP' }) + ' has been accepted and updated your tenure',
+                        body: 'Your payment in the month of ' + newPaymentData.timestamp.toDate().getMonth() + ' ' + newPaymentData.timestamp.toDate().getFullYear() + ' has been accepted and updated your tenure',
                     },
                     data: {
+                        notifID: cNotifID,
                         priority: "high",
                         timeToLive: "60 * 60* 24",
                     },
@@ -470,7 +476,7 @@ exports.paymentOnUpdateTriggers = functions.firestore
             }
 
 
-        } else if (newPaymentData == 'partial') {
+        } else if (newPaymentData.payStatus == 'partial') {
 
             const updateTenureData = {
                 coopId: newPaymentData.coopId,
@@ -486,11 +492,11 @@ exports.paymentOnUpdateTriggers = functions.firestore
                 const coopData = coopRef.data();
                 const token = docRef.data();
                 amount = newPaymentData.amount
-
+                cNotifID = db.collection('users').doc(newPaymentData.payerId).collection('user_notifications').doc().id;
 
                 const userNotif = {
                     userId: newPaymentData.payerId,
-                    notifID: db.collection('users').doc(newPaymentData.payerId).collection('user_notifications').doc().id,
+                    notifID: cNotifID,
                     notifTitle: coopData.coopName,
                     notifText: 'Your partial payment in the month of ' + newPaymentData.timestamp.toDate().getMonth() + ' ' + paymentData.dueDate.toDate.getFullYear() + ' with total amount of ' + amount.toLocaleString('en_PH', { style: 'currency', currency: 'PHP' }) + ' has been accepted and updated your tenure',
                     timestamp: admin.firestore.FieldValue.serverTimestamp(),
@@ -506,6 +512,7 @@ exports.paymentOnUpdateTriggers = functions.firestore
                         body: 'Your partial payment in the month of ' + newPaymentData.timestamp.toDate().getMonth() + ' ' + paymentData.dueDate.toDate.getFullYear() + ' with total amount of ' + amount.toLocaleString('en_PH', { style: 'currency', currency: 'PHP' }) + ' has been accepted and updated your tenure',
                     },
                     data: {
+                        notifID: cNotifID,
                         priority: "high",
                         timeToLive: "60 * 60* 24",
                     },

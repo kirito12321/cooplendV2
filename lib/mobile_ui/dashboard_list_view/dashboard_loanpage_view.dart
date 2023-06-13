@@ -2,7 +2,8 @@
 
 import 'package:ascoop/services/database/data_loan.dart';
 import 'package:ascoop/services/database/data_service.dart';
-import 'package:ascoop/services/payment/baseclient.dart';
+// import 'package:ascoop/services/payment/baseclient.dart';
+// import 'package:ascoop/services/payment/payment_datamodel.dart';
 import 'package:ascoop/utilities/show_alert_dialog.dart';
 import 'package:ascoop/utilities/show_loan_details.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,6 +20,8 @@ class LoanPage extends StatefulWidget {
 }
 
 class _LoanPageState extends State<LoanPage> {
+  bool isOnlinePay = true;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -138,8 +141,8 @@ class _LoanPageState extends State<LoanPage> {
                           flex: 1,
                           child: SizedBox(
                             child: StreamBuilder<List<DataLoan>>(
-                              stream: DataService.database()
-                                  .readAllLoans(status: ['active']),
+                              stream: DataService.database().readAllLoans(
+                                  status: ['active', 'unreceived']),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                         ConnectionState.active &&
@@ -318,59 +321,6 @@ class _LoanPageState extends State<LoanPage> {
     }
   }
 
-  void _payAction(DataLoan loanInfo) async {
-    // var payment = PaymentDataModel(
-    //     merchantId: 'SAMPLEGEN',
-    //     invoiceNo: 12343,
-    //     name: 'Ban',
-    //     email: 'midfox30@gmail.com',
-    //     amount: loanInfo.montlyPayment,
-    //     remarks: 'test testing test');
-    var response = await BaseClient().createSource().catchError((error) {});
-    if (response == null) return;
-
-    // var mechantId = 'test12301203912';
-    // var password = '12345';
-    // var client = http.Client();
-    // var url = Uri.parse('http//test.dragonpay.ph/api/collect/v2/test20200118002/post');
-
-    // var response = await client.get(url);
-    // if(response.statusCode == 200){
-    //   var json = response.body;
-
-    // }
-    // var credintials = SystemEncoding().encode("$mechantId:$password");
-    // String token = convert.base64UrlEncode(credintials);
-
-    // var urlHeader = await http.head(url, headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': 'Basic$token'
-    // });
-
-    // print("url header response: ${urlHeader.statusCode}");
-
-    // var response = await http.post(url, body: {
-    //   // 'merchantid': 'SAMPLEGEN',
-    //   // 'txnid': '24835',
-    //   "amount": '100',
-    //   "currency": 'PHP',
-    //   "invoiceNo": '3322444',
-    //   "name": 'Ban',
-    //   "description": 'Sample Description',
-    //   "email": 'midfox30@gmail.com',
-    //   "mobileNo": '09655413346',
-    //   "procId": 'GCSH'
-    // });
-    // print('Response status: ${response.statusCode}');
-    // print('Response body: ${response.body}');
-
-    // if (await canLaunchUrl(response.request!.url)) {
-    //   await launchUrl(response.request!.url);
-    // } else {
-    //   print("failed url");
-    // }
-  }
-
   Widget buildLoan(DataLoan loanInfo) => Builder(
         builder: (context) => ListTile(
           leading: ClipOval(
@@ -390,6 +340,7 @@ class _LoanPageState extends State<LoanPage> {
           subtitle: Text('Php ${loanInfo.loanAmount.toString()}'),
           trailing: Icon(Icons.arrow_left_outlined),
           onTap: () {
+            checkCoopPayService(loanInfo.coopId);
             // final slidable = Slidable.of(context)!;
 
             // final isClosed =
@@ -408,17 +359,28 @@ class _LoanPageState extends State<LoanPage> {
                       btnName: 'Done')
                   .showAlertDialog();
             } else {
+              print('this is in loan page: $isOnlinePay');
               Navigator.of(context).pushNamed(
                 // '/coop/loanview/',
                 '/coop/loantenureview',
-                arguments: {
-                  'loanId': loanInfo.loanId,
-                  'coopId': loanInfo.coopId,
-                  'userId': loanInfo.userId
-                },
+                arguments: {'loanInfo': loanInfo, 'isOnlinePay': isOnlinePay},
               );
             }
           },
         ),
       );
+  void checkCoopPayService(String coopId) async {
+    try {
+      await DataService.database()
+          .checkCoopOnlinePay(coopId: coopId)
+          .then((value) {
+        print('this is in checkCoopService function: ${value!.isOnlinePay}');
+        setState(() {
+          isOnlinePay = value.isOnlinePay;
+        });
+      });
+    } catch (e) {
+      print('error in check pay service ${e.toString()}');
+    }
+  }
 }

@@ -1,4 +1,6 @@
+import 'package:ascoop/services/database/data_capital_history.dart';
 import 'package:ascoop/services/database/data_coop.dart';
+import 'package:ascoop/services/database/data_coop_acc.dart';
 import 'package:ascoop/services/database/data_loan.dart';
 import 'package:ascoop/services/database/data_loan_tenure.dart';
 import 'package:ascoop/services/database/data_loan_types.dart';
@@ -171,6 +173,15 @@ class DataService implements DataProvider {
       provider.getCapitalShare(coopId: coopId, userId: userId);
 
   @override
+  Future<double> getSavings({required String coopId, required String userId}) =>
+      provider.getSavings(coopId: coopId, userId: userId);
+
+  @override
+  Future<DataCoopAcc?> getCoopAcc(
+          {required String coopId, required String userId}) =>
+      provider.getCoopAcc(coopId: coopId, userId: userId);
+
+  @override
   Future<void> payLoan(
           {required DataLoanTenure tenure, required double amount}) =>
       provider.payLoan(tenure: tenure, amount: amount);
@@ -186,4 +197,14 @@ class DataService implements DataProvider {
 
   @override
   Stream<List<DataSubscription>> readAllSubs() => provider.readAllSubs();
+
+  @override
+  Stream<List<DataCapitalShareHistory>> getCapitalShareHistory(
+          {required String coopId, required String userId}) =>
+      provider.getCapitalShareHistory(coopId: coopId, userId: userId);
+
+  @override
+  Stream<List<DataCapitalShareHistory>> getSavingsHistory(
+          {required String coopId, required String userId}) =>
+      provider.getSavingsHistory(coopId: coopId, userId: userId);
 }

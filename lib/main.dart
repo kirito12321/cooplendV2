@@ -1,9 +1,11 @@
 import 'package:ascoop/firebase_options.dart';
+import 'package:ascoop/mobile_ui/dashboard_list_view/capital_share_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_notification_data_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_wallet_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/loan_payment_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/profile_pic.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/reset_password_status.dart';
+import 'package:ascoop/mobile_ui/dashboard_list_view/savings_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/send_verificationcode.dart';
 import 'package:ascoop/services/auth/auth_service.dart';
 import 'package:ascoop/services/database/data_service.dart';
@@ -11,7 +13,13 @@ import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_update_profile_in
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/loan_view.dart';
 import 'package:ascoop/services/notification_config.dart';
-import 'package:ascoop/web_ui/web_dashboard.dart';
+import 'package:ascoop/web_ui/base.dart';
+import 'package:ascoop/web_ui/constants.dart';
+import 'package:ascoop/web_ui/device_body/desktop_body.dart';
+import 'package:ascoop/web_ui/device_body/mobile_body.dart';
+import 'package:ascoop/web_ui/lockpage.dart';
+import 'package:ascoop/web_ui/login.dart';
+// import 'package:ascoop/web_ui/web_dashboard.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,8 +30,10 @@ import 'package:ascoop/mobile_ui/login_view.dart';
 import 'package:ascoop/mobile_ui/register_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
+import 'package:ascoop/web_ui/global_var.dart' as globals;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //**************************************************************************************************************************** */
 
@@ -119,6 +129,8 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 //**************************************************************************************************************************** */
 Future<void> main() async {
+  bool isMobile = (defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.android);
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -163,29 +175,565 @@ Future<void> main() async {
     // }
   });
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  runApp(MaterialApp(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
-    ),
-    home: const _HomeView(),
-    debugShowCheckedModeBanner: false,
-    routes: {
-      '/login/': (context) => const LoginView(),
-      '/register/': (context) => const RegisterView(),
-      '/loginoption/': (context) => const LoginOption(),
-      '/dashboard/': (context) => const Dashboard(),
-      '/homeview/': (context) => const _HomeView(),
-      '/coop/loanview/': (context) => const LoanView(),
-      '/coop/loantenureview': (context) => const LoanTenureView(),
-      '/user/notificationview/': (context) => const DashboardNotifDataView(),
-      '/user/profileinfo/': (context) => const DashboardProfileInfo(),
-      '/user/profilepicset/': (context) => const ProfilePicSet(),
-      '/user/sendverifCode/': (context) => const SendVFCode(),
-      '/user/resetpassawordstatus': (context) => const ResetPasswordStat(),
-      '/user/wallet/': (context) => const DashboardWallet()
-    },
-  ));
+  isMobile && !kIsWeb
+      ? runApp(MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: const _HomeView(),
+          debugShowCheckedModeBanner: false,
+          routes: {
+            //mobile routes
+            '/login/': (context) => const LoginView(),
+            '/register/': (context) => const RegisterView(),
+            '/loginoption/': (context) => const LoginOption(),
+            '/dashboard/': (context) => const Dashboard(),
+            '/homeview/': (context) => const _HomeView(),
+            '/coop/loanview/': (context) => const LoanView(),
+            '/coop/loantenureview': (context) => const LoanTenureView(),
+            '/user/notificationview/': (context) =>
+                const DashboardNotifDataView(),
+            '/user/profileinfo/': (context) => const DashboardProfileInfo(),
+            '/user/profilepicset/': (context) => const ProfilePicSet(),
+            '/user/sendverifCode/': (context) => const SendVFCode(),
+            '/user/resetpassawordstatus': (context) =>
+                const ResetPasswordStat(),
+            '/user/wallet/': (context) => const DashboardWallet(),
+            '/user/capitalsharehistory/': (context) =>
+                const CapitalShareHistory(),
+            '/user/savingshistory/': (context) => const SavingsView(),
+            '/user/sendemailverif/': (context) => const EmailVerification()
+          },
+        ))
+      : runApp(MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: const _HomeView(),
+          debugShowCheckedModeBanner: false,
+          routes: {
+            //Web Logs
+            '/coop/login': (context) => const WebLoginView(),
+            '/coop/home': (context) => const ResponsiveBaseLayout(
+                  mobileScaffold: WelcomePage(),
+                  tabletScaffold: WelcomePage(),
+                  desktopScaffold: WelcomePage(),
+                ),
+            '/dashboard': (context) {
+              globals.sidenavsel = [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ];
+              return const ResponsiveBaseLayout(
+                mobileScaffold: MobileDash(),
+                tabletScaffold: MobileDash(),
+                desktopScaffold: DesktopDash(),
+              );
+            }, //intro
+
+            //subs
+            '/subscribers/active': (context) {
+              globals.sidenavsel = [
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselsub = [true, false, false];
+              globals.subIndex = 0;
+              return const ResponsiveBaseLayout(
+                  mobileScaffold: MobileSub(),
+                  tabletScaffold: MobileSub(),
+                  desktopScaffold: DesktopSubs());
+            },
+
+            '/subscribers/request': (context) {
+              globals.sidenavsel = [
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselsub = [false, true, false];
+              globals.subIndex = 1;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() !=
+                            'cashier') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobileSub(),
+                              tabletScaffold: MobileSub(),
+                              desktopScaffold: DesktopSubs());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/subscribers/blocked': (context) {
+              globals.sidenavsel = [
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselsub = [false, false, true];
+              globals.subIndex = 2;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() !=
+                            'cashier') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobileSub(),
+                              tabletScaffold: MobileSub(),
+                              desktopScaffold: DesktopSubs());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/loans/active': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselloan = [true, false, false];
+              globals.loanIndex = 0;
+              return const ResponsiveBaseLayout(
+                  mobileScaffold: MobileLoanMgt(),
+                  tabletScaffold: MobileLoanMgt(),
+                  desktopScaffold: DesktopLoans());
+            },
+
+            '/loans/request': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselloan = [false, true, false];
+              globals.loanIndex = 1;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() !=
+                            'cashier') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobileLoanMgt(),
+                              tabletScaffold: MobileLoanMgt(),
+                              desktopScaffold: DesktopLoans());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/loans/complete': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselloan = [false, false, true];
+              globals.loanIndex = 2;
+              return const ResponsiveBaseLayout(
+                  mobileScaffold: MobileLoanMgt(),
+                  tabletScaffold: MobileLoanMgt(),
+                  desktopScaffold: DesktopLoans());
+            },
+
+            '/payments/pending': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselpay = [true, false, false];
+              globals.payIndex = 0;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() !=
+                            'bookkeeper') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobilePayMgt(),
+                              tabletScaffold: MobilePayMgt(),
+                              desktopScaffold: DesktopPayments());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/payments/paid': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselpay = [false, true, false];
+              globals.payIndex = 1;
+              return const ResponsiveBaseLayout(
+                  mobileScaffold: MobilePayMgt(),
+                  tabletScaffold: MobilePayMgt(),
+                  desktopScaffold: DesktopPayments());
+            },
+
+            '/payments/overdue': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+              ];
+              globals.headnavselpay = [false, false, true];
+              globals.payIndex = 2;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() !=
+                            'bookkeeper') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobilePayMgt(),
+                              tabletScaffold: MobilePayMgt(),
+                              desktopScaffold: DesktopPayments());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/staffs': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false
+              ];
+              globals.headnavstaff = [true, false];
+              globals.staffIndex = 0;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() ==
+                            'administrator') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobileStaffMgt(),
+                              tabletScaffold: MobileStaffMgt(),
+                              desktopScaffold: DesktopStaff());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/staffs/blocked': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false
+              ];
+              globals.headnavstaff = [false, true];
+              globals.staffIndex = 1;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() ==
+                            'administrator') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobileStaffMgt(),
+                              tabletScaffold: MobileStaffMgt(),
+                              desktopScaffold: DesktopStaff());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/notifications': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false
+              ];
+              globals.headnavselnotif = [true, false];
+              globals.notifIndex = 0;
+              return const ResponsiveBaseLayout(
+                  mobileScaffold: MobileNotifMgt(),
+                  tabletScaffold: MobileNotifMgt(),
+                  desktopScaffold: DesktopNotif());
+            },
+
+            '/notifications/confirmation': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false
+              ];
+              globals.headnavselnotif = [false, true];
+              globals.notifIndex = 1;
+
+              late final SharedPreferences prefs;
+              late final prefsFuture =
+                  SharedPreferences.getInstance().then((v) => prefs = v);
+              return FutureBuilder(
+                future: prefsFuture,
+                builder: (context, pref) {
+                  if (pref.hasError) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    switch (pref.connectionState) {
+                      case ConnectionState.waiting:
+                        return onWait;
+                      default:
+                        if (pref.data!
+                                .getString('myRole')
+                                .toString()
+                                .toLowerCase() ==
+                            'administrator') {
+                          return const ResponsiveBaseLayout(
+                              mobileScaffold: MobileConfMgt(),
+                              tabletScaffold: MobileConfMgt(),
+                              desktopScaffold: DesktopConfirm());
+                        } else {
+                          return const LockPage();
+                        }
+                    }
+                  }
+                },
+              );
+            },
+
+            '/deposit/capitalshare': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+              ];
+              globals.headnavseldeposit = [true, false];
+              globals.depIndex = 0;
+              return const ResponsiveBaseLayout(
+                  mobileScaffold: MobileDepositMgt(),
+                  tabletScaffold: MobileDepositMgt(),
+                  desktopScaffold: DesktopDeposit());
+            },
+
+            '/deposit/savings': (context) {
+              globals.sidenavsel = [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+              ];
+              globals.headnavseldeposit = [false, true];
+              globals.depIndex = 1;
+              return const ResponsiveBaseLayout(
+                  mobileScaffold: MobileDepositMgt(),
+                  tabletScaffold: MobileDepositMgt(),
+                  desktopScaffold: DesktopDeposit());
+            },
+          },
+        ));
 }
 
 class _HomeView extends StatefulWidget {
@@ -221,14 +769,29 @@ class _HomeViewState extends State<_HomeView> {
 
     // });
 
-    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //   print('A new onMessageOpenedApp event was published!');
-    //   // Navigator.pushNamed(
-    //   //   context,
-    //   //   '/message',
-    //   //   arguments: MessageArguments(message, true),
-    //   // );
-    // });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(
+          'A new onMessageOpenedApp event was published!: ${message.data['notifID']}');
+      // Navigator.pushNamed(
+      //   context,
+      //   '/message',
+      //   arguments: MessageArguments(message, true),
+      // );
+      if (message.data['notifID'] != null) {
+        DataService.database()
+            .updateNotifStatus(notifID: message.data['notifID'])
+            .then((value) => Navigator.of(context).pushNamed(
+                  '/user/notificationview/',
+                  arguments: {
+                    'notifImageUrl': '',
+                    'notifTitle': message.notification!.title ?? 'No Title',
+                    'notifText': message.notification!.body ?? 'No Subtitle'
+                  },
+                ));
+      } else {
+        return;
+      }
+    });
   }
 
   @override
@@ -245,7 +808,7 @@ class _HomeViewState extends State<_HomeView> {
     //     defaultTargetPlatform == TargetPlatform.windows);
     bool isMobile = (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.android);
-    return isMobile ? mobileUI() : desktopUI();
+    return isMobile && !kIsWeb ? mobileUI() : desktopUI();
   }
 
   void sendFCMtoken() async {
@@ -265,26 +828,20 @@ class _HomeViewState extends State<_HomeView> {
 
               if (user != null) {
                 FlutterNativeSplash.remove();
+                // sendFCMtoken();
                 if (user.isEmailVerified) {
                   //for user notification ID
-                  sendFCMtoken();
 
                   //for splash to remove
-
-                  if (!kIsWeb) {
-                    //for mobile web
-                    return const Dashboard();
-                  } else {
-                    return const WebLoginView();
-                  }
+                  sendFCMtoken();
+                  return const Dashboard();
                 } else {
                   FlutterNativeSplash.remove();
-                  devtools.log('this.is dev tools ${user.toString()}');
                   return const EmailVerification();
                 }
               } else {
                 FlutterNativeSplash.remove();
-                return const LoginOption();
+                return const LoginView();
               }
 
             default:
@@ -303,17 +860,15 @@ class _HomeViewState extends State<_HomeView> {
               if (user != null) {
                 //for splash to remove
                 FlutterNativeSplash.remove();
-                if (user.isEmailVerified) {
-                  sendFCMtoken();
-
-                  return const WebLoginView();
-                } else {
-                  return const WebLoginView();
-                }
+                return const WebLoginView();
               } else {
                 //for splash to remove
                 FlutterNativeSplash.remove();
-                return const WebLoginView();
+                return const ResponsiveBaseLayout(
+                  mobileScaffold: DesktopDash(),
+                  tabletScaffold: DesktopDash(),
+                  desktopScaffold: DesktopDash(),
+                );
               }
 
             default:

@@ -1,4 +1,6 @@
+import 'package:ascoop/services/database/data_capital_history.dart';
 import 'package:ascoop/services/database/data_coop.dart' as datacoop;
+import 'package:ascoop/services/database/data_coop_acc.dart';
 
 import 'package:ascoop/services/database/data_loan.dart';
 import 'package:ascoop/services/database/data_loan_tenure.dart';
@@ -91,6 +93,17 @@ abstract class DataProvider {
   Stream<List<DataLoanTypes>> readLoanTypeAvailable({required String coopId});
 
   Future<double> getCapitalShare(
+      {required String coopId, required String userId});
+
+  Future<double> getSavings({required String coopId, required String userId});
+
+  Future<DataCoopAcc?> getCoopAcc(
+      {required String coopId, required String userId});
+
+  Stream<List<DataCapitalShareHistory>> getCapitalShareHistory(
+      {required String coopId, required String userId});
+
+  Stream<List<DataCapitalShareHistory>> getSavingsHistory(
       {required String coopId, required String userId});
 
   Future<void> payLoan(

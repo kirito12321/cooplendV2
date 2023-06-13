@@ -75,11 +75,9 @@ class _ResetPasswordStatState extends State<ResetPasswordStat> {
                               height: screenHeight * 0.1,
                             ),
                             ElevatedButton(
-                                onPressed: () async {
-                                  Navigator.of(context).pushNamed(
-                                    // '/coop/loanview/',
-                                    '/dashboard/',
-                                  );
+                                onPressed: () {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      '/dashboard/', (route) => false);
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.teal[600],

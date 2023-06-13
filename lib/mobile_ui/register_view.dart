@@ -1,5 +1,6 @@
 import 'package:ascoop/services/auth/auth_exception.dart';
 import 'package:ascoop/services/auth/auth_service.dart';
+import 'package:ascoop/utilities/show_alert_dialog.dart';
 import 'package:ascoop/utilities/show_error_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -91,8 +92,7 @@ class _RegisterViewState extends State<RegisterView> {
                           )),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -121,8 +121,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -151,8 +150,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -181,8 +179,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -212,8 +209,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -265,8 +261,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -296,8 +291,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -339,8 +333,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -370,8 +363,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -410,8 +402,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                         const Padding(
-                          padding:
-                              EdgeInsets.only(left: 50, bottom: 10.0),
+                          padding: EdgeInsets.only(left: 50, bottom: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -474,7 +465,8 @@ class _RegisterViewState extends State<RegisterView> {
                               const EdgeInsets.only(left: 50.0, right: 50.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 32, 207, 208),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 32, 207, 208),
                               textStyle: LoginBtnTextStyle,
                               fixedSize: const Size.fromHeight(50),
                               minimumSize: const Size.fromHeight(45),
@@ -509,10 +501,18 @@ class _RegisterViewState extends State<RegisterView> {
 
                                   //after this line we should proceed in verification view instead of login view
                                   AuthService.firebase()
-                                      .sendEmailVerification();
+                                      .sendEmailVerification()
+                                      .then((value) => ShowAlertDialog(
+                                              context: context,
+                                              title: 'Registered',
+                                              body: 'Succesfully Registered',
+                                              btnName: 'Okay')
+                                          .showAlertDialog()
+                                          .then((value) => Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                                  '/login/',
+                                                  (route) => false)));
                                   // ignore: use_build_context_synchronously
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      '/login/', (route) => false);
                                 } on WeakPasswordAuthException {
                                   showErrorDialog(context, 'Weak Password');
                                 } on EmailAlreadyInUseAuthException {

@@ -1,6 +1,9 @@
+import 'package:ascoop/services/database/data_loan.dart';
 import 'package:ascoop/services/database/data_loan_tenure.dart';
 import 'package:ascoop/services/database/data_loan_types.dart';
 import 'package:ascoop/services/database/data_service.dart';
+// import 'package:ascoop/services/payment/baseclient.dart';
+// import 'package:ascoop/services/payment/payment_datamodel.dart';
 import 'package:ascoop/style.dart';
 import 'package:ascoop/utilities/show_alert_dialog.dart';
 import 'package:ascoop/utilities/show_pay_dialog.dart';
@@ -20,14 +23,16 @@ class LoanTenureView extends StatefulWidget {
 
 class _LoanTenureViewState extends State<LoanTenureView> {
   int activeIndex = 0;
-  bool isOnlinePay = false;
+  // bool isOnlinePay = false;
+  final ocCy =
+      NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,###.00');
 
   @override
   Widget build(BuildContext context) {
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
         <String, dynamic>{}) as Map;
     Size size = MediaQuery.of(context).size;
-    checkCoopPayService(arguments['coopId']);
+    // checkCoopPayService(arguments['coopId']);
     double screenWidth = size.width;
 
     return Scaffold(
@@ -52,9 +57,9 @@ class _LoanTenureViewState extends State<LoanTenureView> {
         ),
         body: StreamBuilder<DataLoanTenure?>(
           stream: DataService.database().readLoanTenure(
-              loanId: arguments['loanId'],
-              coopId: arguments['coopId'],
-              userId: arguments['userId']),
+              loanId: (arguments['loanInfo'] as DataLoan).loanId,
+              coopId: (arguments['loanInfo'] as DataLoan).coopId,
+              userId: (arguments['loanInfo'] as DataLoan).userId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final loanTenure = snapshot.data!;
@@ -65,7 +70,19 @@ class _LoanTenureViewState extends State<LoanTenureView> {
               //     ? const Text('No Data')
               //     : buildLoan(loanTenure, size, arguments);
             } else if (snapshot.hasError) {
-              return Center(child: Text('error ${snapshot.error}'));
+              // return Center(
+              //     child: Text('error reading loan details${snapshot.error}'));
+              final loanTenure = DataLoanTenure(
+                  loanId: (arguments['loanInfo'] as DataLoan).loanId,
+                  coopId: (arguments['loanInfo'] as DataLoan).coopId,
+                  userId: (arguments['loanInfo'] as DataLoan).userId,
+                  status: 'completed',
+                  amountPayable: 0,
+                  monthInterest: 0,
+                  payment: 0,
+                  dueDate: DateTime.now(),
+                  month: 0);
+              return buildLoan(loanTenure, size, arguments);
             } else {
               return const Center(child: CircularProgressIndicator());
             }
@@ -116,8 +133,9 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                             'NEXT PAYMENT DUE',
                             style: DashboardNormalTextStyle,
                           ),
-                          Text(
-                              'PHP ${NumberFormat.decimalPattern().format(loanTenure.payment)}'),
+                          loanTenure.status == 'pending'
+                              ? Text('PHP ${ocCy.format(loanTenure.payment)}')
+                              : Text(loanTenure.status),
                         ],
                       ),
                     ),
@@ -131,8 +149,10 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                             'DUE DATE',
                             style: DashboardNormalTextStyle,
                           ),
-                          Text(
-                              '${loanTenure.dueDate.month} / ${loanTenure.dueDate.day} / ${loanTenure.dueDate.year}'),
+                          loanTenure.status == 'pending'
+                              ? Text(
+                                  '${loanTenure.dueDate.month} / ${loanTenure.dueDate.day} / ${loanTenure.dueDate.year}')
+                              : Text(loanTenure.status),
                         ],
                       ),
                     ),
@@ -149,99 +169,112 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                 child: SizedBox(
                     height: 50,
                     width: 160,
-                    child: FutureBuilder<DataLoanPaymentData>(
-                        future: DataService.database()
-                            .checkLoanPayment(tenure: loanTenure)
-                            .first,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final paymentData = snapshot.data!;
+                    child: loanTenure.status == 'pending'
+                        ? FutureBuilder<DataLoanPaymentData>(
+                            future: DataService.database()
+                                .checkLoanPayment(tenure: loanTenure)
+                                .first,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final paymentData = snapshot.data!;
 
-                            return ElevatedButton(
-                                onPressed: () {
-                                  if (isOnlinePay) {
-                                    ShowPayDialog(
-                                            context: context,
-                                            tenure: loanTenure)
-                                        .showPaymentDialog()
-                                        .then((value) {
-                                      if (value == true) {
+                                return ElevatedButton(
+                                    onPressed: () {
+                                      if (arguments['isOnlinePay'] &&
+                                          paymentData.payStatus !=
+                                              'processing') {
+                                        ShowPayDialog(
+                                                context: context,
+                                                loanData: arguments['loanInfo']
+                                                    as DataLoan,
+                                                tenure: loanTenure)
+                                            .showPaymentDialog()
+                                            .then((value) {
+                                          if (value == true) {
+                                            ShowAlertDialog(
+                                                    context: context,
+                                                    title: 'Payment Successful',
+                                                    body:
+                                                        'Your payment is now processing',
+                                                    btnName: 'Close')
+                                                .showAlertDialog();
+                                          }
+                                        });
+                                      } else if (paymentData.payStatus ==
+                                          'processing') {
                                         ShowAlertDialog(
-                                            context: context,
-                                            title: 'Payment Successful',
-                                            body:
-                                                'Your payment is now processing',
-                                            btnName: 'Close');
-                                      }
-                                    });
-                                  } else if (paymentData.payStatus ==
-                                      'processing') {
-                                    ShowAlertDialog(
-                                            context: context,
-                                            title: 'STATUS',
-                                            body:
-                                                'Your payment is currently on process.',
-                                            btnName: 'Close')
-                                        .showAlertDialog();
-                                  } else {
-                                    ShowAlertDialog(
-                                            context: context,
-                                            title: 'Ops, Sorry',
-                                            body:
-                                                'Your coop currently not accepting online payment.',
-                                            btnName: 'Close')
-                                        .showAlertDialog();
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: isOnlinePay
-                                        ? Colors.teal[600]
-                                        : Colors.grey,
-                                    shape: const StadiumBorder()),
-                                child: Text(paymentData.payStatus));
-                          } else if (snapshot.hasError) {
-                            return ElevatedButton(
-                                onPressed: () {
-                                  if (isOnlinePay) {
-                                    ShowPayDialog(
-                                            context: context,
-                                            tenure: loanTenure)
-                                        .showPaymentDialog()
-                                        .then((value) {
-                                      if (value == true) {
+                                                context: context,
+                                                title: 'STATUS',
+                                                body:
+                                                    'Your payment is currently on process.',
+                                                btnName: 'Close')
+                                            .showAlertDialog();
+                                      } else {
                                         ShowAlertDialog(
-                                            context: context,
-                                            title: 'Payment Successful',
-                                            body:
-                                                'Your payment is now processing',
-                                            btnName: 'Close');
+                                                context: context,
+                                                title: 'Ops, Sorry',
+                                                body:
+                                                    'Your coop currently not accepting online payment.',
+                                                btnName: 'Close')
+                                            .showAlertDialog();
                                       }
-                                    });
-                                  } else {
-                                    ShowAlertDialog(
-                                            context: context,
-                                            title: 'Ops, Sorry',
-                                            body:
-                                                'Your coop currently not accepting online payment.',
-                                            btnName: 'Close')
-                                        .showAlertDialog();
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: isOnlinePay
-                                        ? Colors.teal[600]
-                                        : Colors.grey,
-                                    shape: const StadiumBorder()),
-                                child: const Text('Pay'));
-                          } else {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                        })),
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            arguments['isOnlinePay']
+                                                ? Colors.teal[600]
+                                                : Colors.grey,
+                                        shape: const StadiumBorder()),
+                                    child: Text(paymentData.payStatus));
+                              } else if (snapshot.hasError) {
+                                return ElevatedButton(
+                                    onPressed: () {
+                                      print(arguments['isOnlinePay']);
+                                      if (arguments['isOnlinePay']) {
+                                        ShowPayDialog(
+                                                context: context,
+                                                loanData: arguments['loanInfo']
+                                                    as DataLoan,
+                                                tenure: loanTenure)
+                                            .showPaymentDialog()
+                                            .then((value) {
+                                          if (value == true) {
+                                            ShowAlertDialog(
+                                                    context: context,
+                                                    title: 'Payment Successful',
+                                                    body:
+                                                        'Your payment is now processing',
+                                                    btnName: 'Close')
+                                                .showAlertDialog();
+                                          }
+                                        });
+                                      } else {
+                                        ShowAlertDialog(
+                                                context: context,
+                                                title: 'Ops, Sorry',
+                                                body:
+                                                    'Your coop currently not accepting online payment.',
+                                                btnName: 'Close')
+                                            .showAlertDialog();
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            arguments['isOnlinePay']
+                                                ? Colors.teal[600]
+                                                : Colors.grey,
+                                        shape: const StadiumBorder()),
+                                    child: const Text('Pay'));
+                              } else {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                            })
+                        : null),
               ),
               StreamBuilder<List<DataLoanTypes>>(
-                stream: DataService.database()
-                    .readLoanTypeAvailable(coopId: loanTenure.coopId),
+                stream: DataService.database().readLoanTypeAvailable(
+                    coopId: (arguments['loanInfo'] as DataLoan).coopId),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final loanTypes = snapshot.data!;
@@ -273,8 +306,11 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                             itemBuilder: (context, index, realIndex) {
                               final loan = loanTypes[index];
 
-                              return buildCard(loan, index, arguments['coopId'],
-                                  arguments['userId']);
+                              return buildCard(
+                                  loan,
+                                  index,
+                                  (arguments['loanInfo'] as DataLoan).coopId,
+                                  (arguments['loanInfo'] as DataLoan).userId);
                             },
                           ),
                           const SizedBox(
@@ -305,9 +341,9 @@ class _LoanTenureViewState extends State<LoanTenureView> {
               ),
               StreamBuilder<List<DataLoanTenure>>(
                 stream: DataService.database().readAllLoanTenure(
-                    loanId: loanTenure.loanId,
-                    coopId: loanTenure.coopId,
-                    userId: loanTenure.userId),
+                    loanId: (arguments['loanInfo'] as DataLoan).loanId,
+                    coopId: (arguments['loanInfo'] as DataLoan).coopId,
+                    userId: (arguments['loanInfo'] as DataLoan).userId),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final tenure = snapshot.data!;
@@ -369,8 +405,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
               Text(loanTenure.month.toString()),
               Text(
                   '${loanTenure.dueDate.month}/${loanTenure.dueDate.day}/${loanTenure.dueDate.year}'),
-              Text(
-                  'PHP ${NumberFormat.decimalPattern().format(loanTenure.amountPayable.toDouble())}')
+              Text('PHP ${ocCy.format(loanTenure.amountPayable.toDouble())}')
             ],
           ),
           const Divider(
@@ -436,9 +471,6 @@ class _LoanTenureViewState extends State<LoanTenureView> {
 
   Widget buildCard(
       DataLoanTypes? loanTypes, int index, String coopId, String userId) {
-    final ocCy =
-        NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,###.00');
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30),
       color: Colors.transparent,
@@ -514,17 +546,4 @@ class _LoanTenureViewState extends State<LoanTenureView> {
       effect: const WormEffect(activeDotColor: Color.fromRGBO(0, 137, 123, 1)),
       activeIndex: activeIndex,
       count: count);
-  void checkCoopPayService(String coopId) async {
-    try {
-      await DataService.database()
-          .checkCoopOnlinePay(coopId: coopId)
-          .then((value) {
-        setState(() {
-          isOnlinePay = value!.isOnlinePay;
-        });
-      });
-    } catch (e) {
-      print('error in check pay service ${e.toString()}');
-    }
-  }
 }
