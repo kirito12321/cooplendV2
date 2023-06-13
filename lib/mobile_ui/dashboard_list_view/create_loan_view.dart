@@ -188,6 +188,15 @@ class _CreateLoanState extends State<CreateLoan> {
                                 controller: _loanAmount,
                                 keyboardType: TextInputType.number,
                                 enabled: _dropDownValue != null ? true : false,
+                                onChanged: (value) {
+                                  if (value.length == 0) {
+                                    setState(() {
+                                      amountChecker = true;
+                                    });
+                                  } else {
+                                    return;
+                                  }
+                                },
                                 decoration: InputDecoration(
                                     hintText:
                                         'PHP ${ocCy.format(capitalShare * loanBasedValue)}',
@@ -210,9 +219,6 @@ class _CreateLoanState extends State<CreateLoan> {
                               TextField(
                                 controller: _noMonths,
                                 keyboardType: TextInputType.number,
-                                onChanged: (value) {
-                                  amountChecker = true;
-                                },
                                 enabled: _dropDownValue != null &&
                                         amountChecker != false
                                     ? true
@@ -268,6 +274,17 @@ class _CreateLoanState extends State<CreateLoan> {
                                           shape: const StadiumBorder(),
                                         ),
                                         onPressed: () async {
+                                          if ((capitalShare * loanBasedValue) <
+                                              double.parse(_loanAmount.text)) {
+                                            ShowAlertDialog(
+                                                    context: context,
+                                                    title: 'Amount Error',
+                                                    body:
+                                                        'You reached limit amount.',
+                                                    btnName: 'Okay')
+                                                .showAlertDialog();
+                                            return;
+                                          }
                                           if (int.parse(_noMonths.text) <
                                               minMonths) {
                                             ShowAlertDialog(
