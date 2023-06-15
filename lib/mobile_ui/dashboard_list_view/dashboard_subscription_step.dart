@@ -5,6 +5,9 @@ import 'package:ascoop/services/database/data_subscription.dart';
 import 'package:ascoop/services/database/data_user.dart';
 import 'package:ascoop/style.dart';
 import 'package:ascoop/utilities/show_error_dialog.dart';
+import 'package:ascoop/web_ui/constants.dart';
+import 'package:ascoop/web_ui/styles/buttonstyle.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -90,143 +93,179 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 1,
         leading: const BackButton(
           color: Colors.black,
         ),
-        title: Text(
-          widget.coop.coopName,
+        title: const Text(
+          'Subscriber Application',
           style: dashboardMemberTextStyle,
         ),
         backgroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Image(
-                image: AssetImage('assets/images/cooplendlogo.png')),
-            padding: const EdgeInsets.all(2.0),
-            iconSize: screenWidth * 0.4,
-            onPressed: () {},
+          Transform.scale(
+            scale: 0.8,
+            child: IconButton(
+              icon: const Image(
+                  image: AssetImage('assets/images/cooplendlogo.png')),
+              padding: const EdgeInsets.all(2.0),
+              iconSize: screenWidth * 0.3,
+              onPressed: () {},
+            ),
           )
         ],
       ),
-      body: isCompleted
-          ? completingStep()
-          : Center(
-              child: Stepper(
-                type: StepperType.horizontal,
-                steps: getSteps(),
-                currentStep: _currentStep,
-                onStepContinue: () {
-                  final isLastStep = _currentStep == 3;
+      body: Theme(
+        data: ThemeData(
+          canvasColor: Colors.teal[900],
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary: Colors.teal[500],
+                background: red8,
+                secondary: Colors.white,
+              ),
+        ),
+        child: isCompleted
+            ? completingStep()
+            : Center(
+                child: Stepper(
+                  type: StepperType.horizontal,
+                  steps: getSteps(),
+                  currentStep: _currentStep,
+                  onStepContinue: () {
+                    final isLastStep = _currentStep == 3;
 
-                  if (isLastStep) {
-                    if (imageUrls.length >= 3) {
-                      try {
-                        final subscribe = DataSubscription(
-                          userId: widget.user.userUID,
-                          userFirstName: widget.user.firstName,
-                          userMiddleName: widget.user.middleName,
-                          userLastName: widget.user.lastName,
-                          gender: widget.user.gender,
-                          birthdate: widget.user.birthDate,
-                          userEmail: widget.user.email,
-                          userAddress: widget.user.currentAddress,
-                          userMobileNo: widget.user.mobileNo,
-                          coopId: widget.coop.coopID,
-                          profilePicUrl: imageUrls.elementAt(0),
-                          validIdUrl: imageUrls.elementAt(1),
-                          timestamp: Timestamp.now().toDate(),
-                          selfiewithIdUrl: imageUrls.elementAt(2),
-                          status: 'pending',
-                        );
-                        DataService.database().subscribe(subscribe: subscribe);
+                    if (isLastStep) {
+                      if (imageUrls.length >= 3) {
+                        try {
+                          final subscribe = DataSubscription(
+                            userId: widget.user.userUID,
+                            userFirstName: widget.user.firstName,
+                            userMiddleName: widget.user.middleName,
+                            userLastName: widget.user.lastName,
+                            gender: widget.user.gender,
+                            birthdate: widget.user.birthDate,
+                            userEmail: widget.user.email,
+                            userAddress: widget.user.currentAddress,
+                            userMobileNo: widget.user.mobileNo,
+                            coopId: widget.coop.coopID,
+                            profilePicUrl: imageUrls.elementAt(0),
+                            validIdUrl: imageUrls.elementAt(1),
+                            timestamp: Timestamp.now().toDate(),
+                            selfiewithIdUrl: imageUrls.elementAt(2),
+                            status: 'pending',
+                          );
+                          DataService.database()
+                              .subscribe(subscribe: subscribe);
 
-                        setState(() {
-                          isCompleted = true;
-                        });
-                      } on SubscribeException catch (e) {
-                        showErrorDialog(context, e.toString());
+                          setState(() {
+                            isCompleted = true;
+                          });
+                        } on SubscribeException catch (e) {
+                          showErrorDialog(context, e.toString());
+                        }
+                      } else {
+                        showErrorDialog(context, 'Please check previous step');
                       }
+                    } else if (imageUrl != null && pickedFile != null) {
+                      setState(() {
+                        imageUrls.insert(_currentStep, imageUrl!);
+                        collectionPF.insert(_currentStep, pickedFile!);
+                        imageUrl = null;
+                        pickedFile = null;
+                        isUploaded = false;
+                        _currentStep += 1;
+                      });
                     } else {
-                      showErrorDialog(context, 'Please check previous step');
+                      setState(() {
+                        _currentStep += 1;
+                      });
                     }
-                  } else if (imageUrl != null && pickedFile != null) {
-                    setState(() {
-                      imageUrls.insert(_currentStep, imageUrl!);
-                      collectionPF.insert(_currentStep, pickedFile!);
-                      imageUrl = null;
-                      pickedFile = null;
-                      isUploaded = false;
-                      _currentStep += 1;
-                    });
-                  } else {
-                    setState(() {
-                      _currentStep += 1;
-                    });
-                  }
-                },
-                onStepCancel: () {
-                  _currentStep == 0
-                      ? null
-                      : setState(() {
-                          _currentStep -= 1;
-                        });
-                },
-                controlsBuilder: (context, details) {
-                  final isLastStep = _currentStep == getSteps().length - 1;
+                  },
+                  onStepCancel: () {
+                    _currentStep == 0
+                        ? null
+                        : setState(() {
+                            _currentStep -= 1;
+                          });
+                  },
+                  controlsBuilder: (context, details) {
+                    final isLastStep = _currentStep == getSteps().length - 1;
 
-                  return Container(
-                    margin: const EdgeInsets.only(top: 50),
-                    child: Row(
-                      children: [
-                        _currentStep == 0
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: SizedBox(
-                                  width: screenWidth * 0.8,
+                    return Container(
+                      margin: const EdgeInsets.only(top: 50),
+                      child: Row(
+                        children: [
+                          _currentStep == 0
+                              ? Padding(
+                                  padding: const EdgeInsets.only(left: 15.0),
+                                  child: SizedBox(
+                                    width: screenWidth * 0.8,
+                                    height: 45,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                          ),
+                                          backgroundColor:
+                                              isUploaded || isLastStep
+                                                  ? teal8
+                                                  : Colors.grey[500]),
+                                      onPressed: isUploaded || isLastStep
+                                          ? details.onStepContinue
+                                          : null,
+                                      child: Text(
+                                        isLastStep ? 'CONFIRM' : 'NEXT',
+                                        style: btnLoginTxtStyle,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Expanded(
+                                  child: SizedBox(
+                                  height: 45,
                                   child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            isUploaded || isLastStep
-                                                ? const Color.fromRGBO(
-                                                    33, 206, 207, 1)
-                                                : Colors.grey),
                                     onPressed: isUploaded || isLastStep
                                         ? details.onStepContinue
                                         : null,
-                                    child:
-                                        Text(isLastStep ? 'Confirm' : 'Next'),
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                        ),
+                                        backgroundColor:
+                                            isUploaded || isLastStep
+                                                ? teal8
+                                                : Colors.grey[500]),
+                                    child: Text(
+                                      isLastStep ? 'CONFIRM' : 'NEXT',
+                                      style: btnLoginTxtStyle,
+                                    ),
                                   ),
-                                ),
-                              )
-                            : Expanded(
-                                child: ElevatedButton(
-                                onPressed: isUploaded || isLastStep
-                                    ? details.onStepContinue
-                                    : null,
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: isUploaded || isLastStep
-                                        ? const Color.fromRGBO(33, 206, 207, 1)
-                                        : Colors.grey),
-                                child: Text(isLastStep ? 'Confirm' : 'Next'),
-                              )),
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        if (_currentStep != 0)
-                          Expanded(
+                                )),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          if (_currentStep != 0)
+                            Expanded(
+                                child: SizedBox(
+                              height: 45,
                               child: ElevatedButton(
-                            onPressed: details.onStepCancel,
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromRGBO(33, 206, 207, 1)),
-                            child: const Text('Back'),
-                          ))
-                      ],
-                    ),
-                  );
-                },
+                                onPressed: details.onStepCancel,
+                                style: ForRedButton,
+                                child: const Text(
+                                  'BACK',
+                                  style: btnLoginTxtStyle,
+                                ),
+                              ),
+                            ))
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
+      ),
     );
   }
 
@@ -280,30 +319,39 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   '1st',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(10.0),
+                Container(
+                  padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    'Please take a picture of your Self, and Send it here.',
-                    style: SubsccriptionTextStyle,
+                    'Please take a picture of your Self, and Send it here.'
+                        .toUpperCase(),
+                    style: h4,
+                    textAlign: TextAlign.center,
                   ),
                 ),
+                const SizedBox(
+                  height: 8,
+                ),
                 pickedFile == null
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 150,
                         width: 150,
                         child: Text(
                           'Please select your profile pic',
-                          style: DashboardNormalTextStyle,
+                          style: btnForgotTxtStyle,
+                          textAlign: TextAlign.center,
                         ),
                       )
                     : Container(
-                        height: 150,
-                        width: 150,
-                        color: Colors.blue,
+                        height: 200,
+                        width: 200,
+                        color: Colors.white,
                         child: Image.file(
                           File(pickedFile!.path!),
                           width: double.infinity,
@@ -315,6 +363,7 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
+                        style: ForTealButton,
                         onPressed: () {
                           selectFile(profilePicFolder);
 
@@ -323,7 +372,10 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                           //    pickedFile = null;
                           //  });
                         },
-                        child: const Text('Select Photo')),
+                        child: const Text(
+                          'Select Photo',
+                          style: btnLoginTxtStyle,
+                        )),
                     IconButton(
                         onPressed: () {
                           deleteUploadedFile();
@@ -339,7 +391,10 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                             }
                           });
                         },
-                        icon: const Icon(Icons.delete_forever_outlined))
+                        icon: Icon(
+                          Icons.delete_forever_outlined,
+                          color: red8,
+                        ))
                   ],
                 ),
                 buildUploadProgress(),
@@ -352,30 +407,39 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   '2nd',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Text(
-                    'Please take a picture of your valid ID, and send it here',
-                    style: SubsccriptionTextStyle,
+                    'Please take a picture of your valid ID, and send it here'
+                        .toUpperCase(),
+                    style: h4,
+                    textAlign: TextAlign.center,
                   ),
                 ),
+                const SizedBox(
+                  height: 8,
+                ),
                 pickedFile == null
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 150,
                         width: 150,
                         child: Text(
                           'Please select your Valid ID',
-                          style: DashboardNormalTextStyle,
+                          style: btnForgotTxtStyle,
+                          textAlign: TextAlign.center,
                         ),
                       )
                     : Container(
-                        height: 150,
-                        width: 150,
-                        color: Colors.blue,
+                        height: 200,
+                        width: 200,
+                        color: Colors.white,
                         child: Image.file(
                           File(pickedFile!.path!),
                           width: double.infinity,
@@ -387,6 +451,7 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
+                      style: ForTealButton,
                       onPressed: () {
                         selectFile(validIDFolder);
                         //  setState(() {
@@ -394,7 +459,10 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                         //    pickedFile = null;
                         //  });
                       },
-                      child: const Text('Select Photo'),
+                      child: const Text(
+                        'Select Photo',
+                        style: btnLoginTxtStyle,
+                      ),
                     ),
                     IconButton(
                         onPressed: () {
@@ -411,7 +479,10 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                             }
                           });
                         },
-                        icon: const Icon(Icons.delete_forever_outlined))
+                        icon: Icon(
+                          Icons.delete_forever_outlined,
+                          color: red8,
+                        ))
                   ],
                 ),
                 buildUploadProgress(),
@@ -424,30 +495,39 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   '3rd',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: const Text(
-                    'Please take a picture of you and your valid ID, and send it here',
-                    style: SubsccriptionTextStyle,
+                  child: Text(
+                    'Please take a picture of you and your valid ID, and send it here'
+                        .toUpperCase(),
+                    style: h4,
+                    textAlign: TextAlign.center,
                   ),
                 ),
+                const SizedBox(
+                  height: 8,
+                ),
                 pickedFile == null
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 150,
                         width: 150,
                         child: Text(
                           'Please select your picture',
-                          style: DashboardNormalTextStyle,
+                          style: btnForgotTxtStyle,
+                          textAlign: TextAlign.center,
                         ),
                       )
                     : Container(
-                        height: 150,
-                        width: 150,
-                        color: Colors.blue,
+                        height: 200,
+                        width: 200,
+                        color: Colors.white,
                         child: Image.file(
                           File(pickedFile!.path!),
                           width: double.infinity,
@@ -459,6 +539,7 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
+                      style: ForTealButton,
                       onPressed: () {
                         selectFile(picWithValidIDFolder);
                         //  setState(() {
@@ -466,7 +547,10 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                         //    pickedFile = null;
                         //  });
                       },
-                      child: const Text('Select Photo'),
+                      child: const Text(
+                        'Select Photo',
+                        style: btnLoginTxtStyle,
+                      ),
                     ),
                     IconButton(
                         onPressed: () {
@@ -483,7 +567,10 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
                             }
                           });
                         },
-                        icon: const Icon(Icons.delete_forever_outlined))
+                        icon: Icon(
+                          Icons.delete_forever_outlined,
+                          color: red8,
+                        ))
                   ],
                 ),
                 buildUploadProgress(),
@@ -494,7 +581,10 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
             title: const FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
-                  'final',
+                  'FINAL',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 )),
             content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -514,14 +604,28 @@ class _CoopSubscriptionStepState extends State<CoopSubscriptionStep> {
       GestureDetector(
         onTap: () {},
         child: Container(
-            height: 50,
-            width: 50,
+            height: 150,
+            width: 150,
             decoration: BoxDecoration(
                 border: Border.all(width: 2.0, color: Colors.black38)),
             child: Image.network(url)),
       ),
-      Text(picked.name),
-      Text(getFileSze(picked))
+      Text(
+        picked.name,
+        style: btnForgotTxtStyle1,
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(
+        height: 6,
+      ),
+      Text(
+        getFileSze(picked),
+        style: btnForgotTxtStyle,
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(
+        height: 15,
+      ),
     ]);
   }
 

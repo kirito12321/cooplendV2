@@ -49,114 +49,121 @@ class _LoanPageState extends State<LoanPage> {
         Container(
           width: screenWidth,
           height: 65,
-          child: Row(
-            children: [
-              InkWell(
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    setState(() {
-                      select(0);
-                      disInd = 0;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: navs[0] == true ? Colors.teal[800] : Colors.white,
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Color.fromARGB(255, 174, 171, 171),
-                            spreadRadius: 0,
-                            blurStyle: BlurStyle.normal,
-                            blurRadius: 0.9),
-                      ],
-                    ),
-                    child: Text(
-                      'Active Loans',
-                      style: TextStyle(
-                          fontFamily: FontNamedDef,
-                          color: navs[0] == true ? Colors.white : Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  )),
-              const Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-              InkWell(
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    setState(() {
-                      select(1);
-                      disInd = 1;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color:
-                          navs[1] == true ? Colors.orange[800] : Colors.white,
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Color.fromARGB(255, 174, 171, 171),
-                            spreadRadius: 0,
-                            blurStyle: BlurStyle.normal,
-                            blurRadius: 0.9),
-                      ],
-                    ),
-                    child: Text(
-                      'Pending Loans',
-                      style: TextStyle(
-                          fontFamily: FontNamedDef,
-                          color: navs[1] == true ? Colors.white : Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  )),
-              const Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-              InkWell(
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    setState(() {
-                      select(2);
-                      disInd = 2;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: navs[2] == true ? Colors.red[800] : Colors.white,
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Color.fromARGB(255, 174, 171, 171),
-                            spreadRadius: 0,
-                            blurStyle: BlurStyle.normal,
-                            blurRadius: 0.9),
-                      ],
-                    ),
-                    child: Text(
-                      'Completed Loans',
-                      style: TextStyle(
-                          fontFamily: FontNamedDef,
-                          color: navs[2] == true ? Colors.white : Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  )),
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                InkWell(
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      setState(() {
+                        select(0);
+                        disInd = 0;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color:
+                            navs[0] == true ? Colors.teal[800] : Colors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Color.fromARGB(255, 174, 171, 171),
+                              spreadRadius: 0,
+                              blurStyle: BlurStyle.normal,
+                              blurRadius: 0.9),
+                        ],
+                      ),
+                      child: Text(
+                        'Active Loans',
+                        style: TextStyle(
+                            fontFamily: FontNamedDef,
+                            color:
+                                navs[0] == true ? Colors.white : Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    )),
+                const Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                InkWell(
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      setState(() {
+                        select(1);
+                        disInd = 1;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color:
+                            navs[1] == true ? Colors.orange[800] : Colors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Color.fromARGB(255, 174, 171, 171),
+                              spreadRadius: 0,
+                              blurStyle: BlurStyle.normal,
+                              blurRadius: 0.9),
+                        ],
+                      ),
+                      child: Text(
+                        'Pending Loans',
+                        style: TextStyle(
+                            fontFamily: FontNamedDef,
+                            color:
+                                navs[1] == true ? Colors.white : Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    )),
+                const Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                InkWell(
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      setState(() {
+                        select(2);
+                        disInd = 2;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: navs[2] == true ? Colors.red[800] : Colors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Color.fromARGB(255, 174, 171, 171),
+                              spreadRadius: 0,
+                              blurStyle: BlurStyle.normal,
+                              blurRadius: 0.9),
+                        ],
+                      ),
+                      child: Text(
+                        'Completed Loans',
+                        style: TextStyle(
+                            fontFamily: FontNamedDef,
+                            color:
+                                navs[2] == true ? Colors.white : Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    )),
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -187,7 +194,7 @@ class _LoanPageState extends State<LoanPage> {
                               const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 8)),
                               Text(
-                                'No Completed Loans Yet',
+                                'No Active Loans Yet',
                                 style: const TextStyle(
                                     fontFamily: FontNameDefault,
                                     letterSpacing: 0.5,
@@ -207,28 +214,15 @@ class _LoanPageState extends State<LoanPage> {
                               itemBuilder: (context, index) => Slidable(
                                   endActionPane: ActionPane(
                                       motion: const BehindMotion(),
-                                      extentRatio: 0.5,
+                                      extentRatio: 0.27,
                                       children: [
                                         SlidableAction(
                                           backgroundColor: teal8,
                                           icon: Feather.clipboard,
-                                          borderRadius: BorderRadius.only(
-                                              bottomLeft: Radius.circular(15),
-                                              topLeft: Radius.circular(15)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          spacing: 5,
                                           label: 'Details',
-                                          spacing: 5,
-                                          onPressed: (context) =>
-                                              _onSelectedAction(
-                                                  loan[index], Actions.details),
-                                        ),
-                                        SlidableAction(
-                                          backgroundColor: orange8,
-                                          icon: Feather.bookmark,
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(15),
-                                              bottomRight: Radius.circular(15)),
-                                          spacing: 5,
-                                          label: 'View',
                                           onPressed: (context) =>
                                               Navigator.of(context).pushNamed(
                                             // '/coop/loanview/',
@@ -291,7 +285,7 @@ class _LoanPageState extends State<LoanPage> {
                               const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 8)),
                               Text(
-                                'No Completed Loans Yet',
+                                'No Pending Loans Yet',
                                 style: const TextStyle(
                                     fontFamily: FontNameDefault,
                                     letterSpacing: 0.5,
@@ -374,15 +368,29 @@ class _LoanPageState extends State<LoanPage> {
                                   endActionPane: ActionPane(
                                       motion: const BehindMotion(),
                                       children: [
-                                        SlidableAction(
-                                          backgroundColor:
-                                              Colors.yellow.shade300,
-                                          icon: Feather.clipboard,
-                                          label: 'Details',
-                                          onPressed: (context) =>
-                                              _onSelectedAction(
-                                                  loan[index], Actions.details),
-                                        ),
+                                        ActionPane(
+                                            motion: const BehindMotion(),
+                                            extentRatio: 0.27,
+                                            children: [
+                                              SlidableAction(
+                                                backgroundColor: teal8,
+                                                icon: Feather.clipboard,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                spacing: 5,
+                                                label: 'Details',
+                                                onPressed: (context) =>
+                                                    Navigator.of(context)
+                                                        .pushNamed(
+                                                  // '/coop/loanview/',
+                                                  '/coop/loantenureview',
+                                                  arguments: {
+                                                    'loanInfo': loan[index],
+                                                    'isOnlinePay': isOnlinePay
+                                                  },
+                                                ),
+                                              ),
+                                            ]),
                                       ]),
                                   child: Container(
                                       width: screenWidth,
@@ -457,9 +465,10 @@ class _LoanPageState extends State<LoanPage> {
             if (loanInfo.loanStatus == 'pending') {
               ShowAlertDialog(
                       context: context,
-                      title: 'Show this to the coop counter',
-                      body: 'Loan code: ${loanInfo.loanId}',
-                      btnName: 'Done')
+                      title: 'Loan Request is In-Review',
+                      body: /*'Loan code: ${loanInfo.loanId}',*/
+                          'Please wait for approval or visit the Coop to inquire. Thank you',
+                      btnName: 'OK')
                   .showAlertDialog();
             } else {
               print('this is in loan page: $isOnlinePay');

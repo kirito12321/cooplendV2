@@ -7,8 +7,14 @@ import 'package:ascoop/style.dart';
 import 'package:ascoop/utilities/show_alert_dialog.dart';
 import 'package:ascoop/utilities/show_error_dialog.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_view.dart';
+import 'package:ascoop/web_ui/constants.dart';
+import 'package:ascoop/web_ui/styles/buttonstyle.dart';
+import 'package:ascoop/web_ui/styles/inputstyle.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class CreateLoan extends StatefulWidget {
@@ -38,7 +44,7 @@ class _CreateLoanState extends State<CreateLoan> {
   bool amountChecker = false;
   bool monthChecker = false;
   final ocCy =
-      NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,###.00');
+      NumberFormat.currency(decimalDigits: 2, customPattern: '###,###,##0.00');
 
   @override
   void initState() {
@@ -92,13 +98,14 @@ class _CreateLoanState extends State<CreateLoan> {
                   ),
                   child: Padding(
                     padding: EdgeInsets.only(
-                        top: screenHeight * 0.04,
+                        top: screenHeight * 0.025,
                         bottom: screenHeight * 0.04,
                         left: screenWidth * 0.06,
                         right: screenWidth * 0.06),
                     child: PhysicalModel(
                       color: Colors.white,
-                      elevation: 8,
+                      elevation: 10,
+                      shadowColor: grey1,
                       borderRadius: const BorderRadius.all(Radius.circular(20)),
                       child: Container(
                         margin: const EdgeInsets.all(20),
@@ -111,7 +118,19 @@ class _CreateLoanState extends State<CreateLoan> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              const Text('Loan Code:'),
+                              Center(
+                                child: Text(
+                                  'Loan Application'.toUpperCase(),
+                                  style: h3,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                'Loan Code:'.toUpperCase(),
+                                style: btnForgotTxtStyle,
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -120,12 +139,18 @@ class _CreateLoanState extends State<CreateLoan> {
                                     setLoanId != '' ? setLoanId : '??',
                                 textAlign: TextAlign.right,
                                 readOnly: true,
-                                decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
+                                style: inputTextStyle,
+                                decoration: InputDecoration(
+                                    hintStyle: inputHintTxtStyle1,
+                                    focusedBorder: focusOutlineBorder,
+                                    border: OutlineBorder,
                                     prefixIcon: Align(
                                       widthFactor: 1.0,
                                       heightFactor: 1.0,
-                                      child: Icon(Icons.password_sharp),
+                                      child: Icon(
+                                        FontAwesomeIcons.barcode,
+                                        color: Colors.teal[800],
+                                      ),
                                     ),
                                     isDense: true,
                                     contentPadding: EdgeInsets.all(8)),
@@ -152,12 +177,25 @@ class _CreateLoanState extends State<CreateLoan> {
                                     //     ));
 
                                     return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
+                                        Text(
+                                          'Loan Type:'.toUpperCase(),
+                                          style: btnForgotTxtStyle,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
                                         DropdownButtonFormField(
+                                          style: inputTextStyle,
+                                          decoration: InputDecoration(
+                                              hintStyle: inputHintTxtStyle1,
+                                              focusedBorder: focusOutlineBorder,
+                                              border: OutlineBorder,
+                                              hintText: 'LOAN TYPE'),
                                           items: ddMenuItem(loanTypes),
                                           value: _sampleLoanTypes,
-                                          hint: const Text(
-                                              'Please Select Loan Types'),
                                           isExpanded: true,
                                           focusColor: Colors.black,
                                           onChanged: (value) {
@@ -180,11 +218,15 @@ class _CreateLoanState extends State<CreateLoan> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              const Text('Enter Loan Amount:'),
+                              Text(
+                                'Loan Amount:'.toUpperCase(),
+                                style: btnForgotTxtStyle,
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TextField(
+                              TextFormField(
+                                style: inputTextStyle,
                                 controller: _loanAmount,
                                 keyboardType: TextInputType.number,
                                 enabled: _dropDownValue != null ? true : false,
@@ -198,13 +240,15 @@ class _CreateLoanState extends State<CreateLoan> {
                                   }
                                 },
                                 decoration: InputDecoration(
+                                    hintStyle: inputHintTxtStyle1,
+                                    focusedBorder: focusOutlineBorder,
+                                    border: OutlineBorder,
                                     hintText:
-                                        'PHP ${ocCy.format(capitalShare * loanBasedValue)}',
-                                    border: const OutlineInputBorder(),
+                                        'Max Amount PHP ${ocCy.format(capitalShare * loanBasedValue)}',
                                     prefixIcon: const Align(
                                       widthFactor: 1.0,
                                       heightFactor: 1.0,
-                                      child: Icon(Icons.money_outlined),
+                                      child: Icon(FontAwesomeIcons.pesoSign),
                                     ),
                                     isDense: true,
                                     contentPadding: const EdgeInsets.all(8)),
@@ -212,11 +256,15 @@ class _CreateLoanState extends State<CreateLoan> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              const Text('Enter Max No. of months to pay:'),
+                              Text(
+                                'Enter No. of Months To Pay:'.toUpperCase(),
+                                style: btnForgotTxtStyle,
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
-                              TextField(
+                              TextFormField(
+                                style: inputTextStyle,
                                 controller: _noMonths,
                                 keyboardType: TextInputType.number,
                                 enabled: _dropDownValue != null &&
@@ -224,31 +272,28 @@ class _CreateLoanState extends State<CreateLoan> {
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
-                                    hintText: 'min No. of Months $minMonths',
-                                    border: const OutlineInputBorder(),
+                                    hintStyle: inputHintTxtStyle1,
+                                    focusedBorder: focusOutlineBorder,
+                                    border: OutlineBorder,
+                                    hintText: 'Min No. of Months $minMonths',
                                     prefixIcon: const Align(
                                       widthFactor: 1.0,
                                       heightFactor: 1.0,
-                                      child:
-                                          Icon(Icons.calendar_month_outlined),
+                                      child: Icon(Feather.calendar),
                                     ),
                                     isDense: true,
                                     contentPadding: const EdgeInsets.all(8)),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 20),
+                                padding: const EdgeInsets.only(top: 30),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     SizedBox(
-                                      height: 40,
-                                      width: 100,
+                                      height: 50,
+                                      width: 110,
                                       child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 32, 207, 208),
-                                          shape: const StadiumBorder(),
-                                        ),
+                                        style: ForRedButton,
                                         onPressed: () async {
                                           Navigator.pushAndRemoveUntil(
                                             context,
@@ -258,21 +303,20 @@ class _CreateLoanState extends State<CreateLoan> {
                                             (route) => false,
                                           );
                                         },
-                                        child: const Text('Back'),
+                                        child: const Text(
+                                          'CANCEL',
+                                          style: btnLoginTxtStyle,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(
                                       width: 10,
                                     ),
                                     SizedBox(
-                                      height: 40,
-                                      width: 100,
+                                      height: 50,
+                                      width: 110,
                                       child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 32, 207, 208),
-                                          shape: const StadiumBorder(),
-                                        ),
+                                        style: ForTealButton,
                                         onPressed: () async {
                                           if ((capitalShare * loanBasedValue) <
                                               double.parse(_loanAmount.text)) {
@@ -360,7 +404,10 @@ class _CreateLoanState extends State<CreateLoan> {
                                                 context, e.toString());
                                           }
                                         },
-                                        child: const Text('Loan'),
+                                        child: const Text(
+                                          'APPLY',
+                                          style: btnLoginTxtStyle,
+                                        ),
                                       ),
                                     ),
                                   ],

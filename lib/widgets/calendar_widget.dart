@@ -1,3 +1,5 @@
+import 'package:ascoop/style.dart';
+import 'package:ascoop/web_ui/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -17,8 +19,7 @@ class CalendarWidget extends StatelessWidget {
       backgroundColor: Colors.white54,
       selectionDecoration: BoxDecoration(
         color: Colors.transparent,
-        border: Border.all(
-            color: const Color.fromARGB(255, 68, 140, 255), width: 5),
+        border: Border.all(color: teal8, width: 3),
         borderRadius: const BorderRadius.all(Radius.circular(4)),
         shape: BoxShape.rectangle,
       ),
@@ -26,10 +27,16 @@ class CalendarWidget extends StatelessWidget {
       initialSelectedDate: initialDate,
       minDate: DateTime(initialDate.year, initialDate.month),
       maxDate: DateTime(initialDate.year, initialDate.month + 1),
-      headerStyle: const CalendarHeaderStyle(
+      headerStyle: CalendarHeaderStyle(
           textAlign: TextAlign.center,
-          backgroundColor: Color.fromARGB(255, 32, 207, 208),
-          textStyle: TextStyle(color: Colors.white)),
+          backgroundColor: teal8,
+          textStyle: TextStyle(
+            color: Colors.white,
+            fontFamily: FontNamedDef,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          )),
     );
   }
 

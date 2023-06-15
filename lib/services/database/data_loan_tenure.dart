@@ -12,10 +12,12 @@ class DataLoanTenure {
   final String? payMethod;
   final DateTime dueDate;
   final int month;
+  final double? paidAmount;
   final double? penalty;
 
   DataLoanTenure(
       {required this.loanId,
+      this.paidAmount,
       required this.coopId,
       required this.userId,
       required this.status,
@@ -40,6 +42,9 @@ class DataLoanTenure {
           : null,
       payment:
           json['payment'] != null ? (json['payment'] as num).toDouble() : 0,
+      paidAmount: json['paidAmount'] != null
+          ? (json['paidAmount'] as num).toDouble()
+          : 0,
       payMethod: json['payMethod'] ?? ' ',
       dueDate: (json['dueDate'] as Timestamp).toDate(),
       month: json['month'] ?? 0,

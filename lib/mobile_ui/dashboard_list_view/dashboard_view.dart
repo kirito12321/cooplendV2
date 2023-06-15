@@ -7,6 +7,8 @@ import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_cooppage_view.dar
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_homepage_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_loanpage_view.dart';
 import 'package:ascoop/utilities/show_confirmation_dialog.dart';
+import 'package:ascoop/web_ui/styles/buttonstyle.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -25,17 +27,17 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List ico = [
-    Icon(
+    const Icon(
       Feather.monitor,
       size: 23,
       color: Colors.black,
     ),
-    Icon(
+    const Icon(
       Feather.credit_card,
       size: 23,
       color: Colors.black,
     ),
-    Icon(
+    const Icon(
       Feather.bell,
       size: 23,
       color: Colors.black,
@@ -290,27 +292,58 @@ class _DashboardState extends State<Dashboard> {
                     MaterialButton(
                       minWidth: 40,
                       onPressed: () {
-                        ShowConfirmationDialog(
-                                context: context,
-                                title: 'Logout Confirmation',
-                                body: 'Are you sure you want to logout?',
-                                fBtnName: 'Yes',
-                                sBtnName: 'No')
-                            .showConfirmationDialog()
-                            .then((value) {
-                          if (value!) {
-                            AuthService.firebase().logOut().then((value) =>
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/login/', (route) => false));
-                          }
-                        });
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Logout Confirmation',
+                                style: alertDialogTtl,
+                              ),
+                              content: Text(
+                                'Are you sure you want to logout?',
+                                style: alertDialogContent,
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  style: ForRedButton,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'No',
+                                      style: alertDialogBtn,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await AuthService.firebase().logOut().then(
+                                        (value) => Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                                '/login/', (route) => false));
+                                  },
+                                  style: ForTealButton,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Yes',
+                                      style: alertDialogBtn,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Feather.log_out, color: unSelectedColor),
-                          const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 2)),
+                          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                           Text(
                             'Logout',
                             style: TextStyle(color: unSelectedColor),

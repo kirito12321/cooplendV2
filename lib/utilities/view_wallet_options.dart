@@ -1,3 +1,7 @@
+import 'package:ascoop/style.dart';
+import 'package:ascoop/web_ui/constants.dart';
+import 'package:ascoop/web_ui/styles/buttonstyle.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 // import 'package:math_expressions/math_expressions.dart';
@@ -15,13 +19,19 @@ class ShowWalletViewOption {
     return showDialog(
       context: context,
       builder: (context) => Dialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Please select which one you want to view'),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Please select to view ledger',
+                style: alertDialogTtl,
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              SizedBox(
                 height: 50,
                 width: 160,
                 child: ElevatedButton(
@@ -33,22 +43,21 @@ class ShowWalletViewOption {
                           '/user/capitalsharehistory/',
                           arguments: {'coopId': coopId, 'userId': userId});
                     },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal[600],
-                        shape: const StadiumBorder()),
-                    child: const Text('Capital Share')),
+                    style: ForBorderTeal,
+                    child: Text(
+                      'Capital Share Ledger',
+                      style: TextStyle(
+                        fontFamily: FontNamedDef,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: teal8,
+                      ),
+                    )),
               ),
-            ),
-            const Divider(
-              color: Color.fromARGB(255, 19, 13, 13), //color of divider
-              height: 0, //height spacing of divider
-              thickness: 1, //thickness of divier line
-              indent: 0, //spacing at the start of divider
-              endIndent: 0, //spacing at the end of divider
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
                 height: 50,
                 width: 160,
                 child: ElevatedButton(
@@ -57,13 +66,19 @@ class ShowWalletViewOption {
                       Navigator.of(context).pushNamed('/user/savingshistory/',
                           arguments: {'coopId': coopId, 'userId': userId});
                     },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal[600],
-                        shape: const StadiumBorder()),
-                    child: const Text('Savings')),
-              ),
-            )
-          ],
+                    style: ForBorderOrange,
+                    child: Text(
+                      'Savings Ledger',
+                      style: TextStyle(
+                        fontFamily: FontNamedDef,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: orange8,
+                      ),
+                    )),
+              )
+            ],
+          ),
         ),
       ),
     );

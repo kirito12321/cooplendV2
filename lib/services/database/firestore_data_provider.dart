@@ -208,7 +208,6 @@ class FirestoreDataProvider implements DataProvider {
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection('user_notifications')
-          .where('status', isEqualTo: 'unread')
           .snapshots()
           .map((snapshots) => snapshots.docs
               .map((doc) => DataUserNotification.fromJson(doc.data()))
@@ -613,4 +612,36 @@ class FirestoreDataProvider implements DataProvider {
           .map((snapshot) => snapshot.docs
               .map((doc) => DataCapitalShareHistory.fromJson(doc.data()))
               .toList());
+
+  @override
+  Future<bool> checkAllowedReloan(
+      {required String coopId, required int requiredMonthLoanPaid}) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('loans')
+        .where('coopId', isEqualTo: coopId)
+        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where('loanStatus', isEqualTo: 'pending')
+        .where('noMonthsPaid', isLessThan: requiredMonthLoanPaid)
+        .get();
+    if (snapshot.docs.isNotEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  @override
+  Future<void> deleteAllNotifications(
+      {required DataUserNotification notif}) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('user_notifications')
+          .doc(notif.notifID)
+          .delete();
+    } catch (e) {
+      print('Error in deleteAllNotifications function: ${e.toString()}');
+    }
+  }
 }

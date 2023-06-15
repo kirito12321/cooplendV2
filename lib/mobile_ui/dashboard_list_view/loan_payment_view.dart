@@ -32,7 +32,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
   int activeIndex = 0;
   // bool isOnlinePay = false;
   final ocCy =
-      NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,###.00');
+      NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,##0.00');
 
   @override
   Widget build(BuildContext context) {
@@ -170,8 +170,8 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                               ),
                               loanTenure.status == 'pending'
                                   ? Text(
-                                      'PHP ${NumberFormat('###,###,###,###.00').format(loanTenure.payment)}',
-                                      style: TextStyle(
+                                      'PHP ${NumberFormat('###,###,###,##0.00').format(loanTenure.payment)}',
+                                      style: const TextStyle(
                                         fontFamily: FontNamedDef,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w800,
@@ -181,7 +181,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                     )
                                   : Text(
                                       loanTenure.status,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontFamily: FontNamedDef,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w800,
@@ -211,7 +211,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                       DateFormat('MMM d, yyyy')
                                           .format(loanTenure.dueDate)
                                           .toUpperCase(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontFamily: FontNamedDef,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w800,
@@ -221,7 +221,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                     )
                                   : Text(
                                       loanTenure.status,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontFamily: FontNamedDef,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w800,
@@ -249,16 +249,6 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                           return ElevatedButton(
                                             style: ForTealButton1,
                                             onPressed: () {
-                                              showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        elevation: 0,
-                                                        content: onWait),
-                                              );
                                               if (arguments['isOnlinePay'] &&
                                                   paymentData.payStatus !=
                                                       'processing') {
@@ -301,7 +291,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                     .showAlertDialog();
                                               }
                                             },
-                                            child: Row(
+                                            child: const Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               crossAxisAlignment:
@@ -311,7 +301,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                   Feather.dollar_sign,
                                                   size: 18,
                                                 ),
-                                                const Padding(
+                                                Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             horizontal: 2)),
@@ -367,10 +357,10 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                               }
                                             },
                                             style: ForTealButton1,
-                                            child: Row(
+                                            child: const Row(
                                               children: [
                                                 Icon(Feather.dollar_sign),
-                                                const Padding(
+                                                Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             horizontal: 2)),
@@ -636,7 +626,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                 ),
                                               ),
                                               Text(
-                                                'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['totalPayment'])}',
+                                                'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['totalPayment'])}',
                                                 style: const TextStyle(
                                                   fontFamily: FontNamedDef,
                                                   fontSize: 14,
@@ -664,7 +654,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                 ),
                                               ),
                                               Text(
-                                                'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['totalInterest'])}',
+                                                'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['totalInterest'])}',
                                                 style: const TextStyle(
                                                   fontFamily: FontNamedDef,
                                                   fontSize: 14,
@@ -697,7 +687,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                             ),
                                           ),
                                           Text(
-                                            'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['loanAmount'])}'
+                                            'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['loanAmount'])}'
                                                 .toUpperCase(),
                                             style: const TextStyle(
                                               fontFamily: FontNamedDef,
@@ -770,7 +760,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                         return onWait;
                                                       default:
                                                         return Text(
-                                                          '${NumberFormat('###.00').format(snapshot.data!.data()!['interest'] * 100)} %',
+                                                          '${NumberFormat('##0.00').format(snapshot.data!.data()!['interest'] * 100)} %',
                                                           style:
                                                               const TextStyle(
                                                             fontFamily:
@@ -810,7 +800,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                               ),
                                             ),
                                             Text(
-                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['totalPayment'] - data[0]['paidAmount'])}',
+                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['totalPayment'] - data[0]['paidAmount'])}',
                                               style: TextStyle(
                                                 fontFamily: FontNamedDef,
                                                 fontSize: 14,
@@ -838,7 +828,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                               ),
                                             ),
                                             Text(
-                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['paidAmount'])}',
+                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['paidAmount'])}',
                                               style: TextStyle(
                                                 fontFamily: FontNamedDef,
                                                 fontSize: 14,
@@ -903,7 +893,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                               ),
                                                             ),
                                                             Text(
-                                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['capitalFee'])}',
+                                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['capitalFee'])}',
                                                               style:
                                                                   const TextStyle(
                                                                 fontFamily:
@@ -944,7 +934,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                               ),
                                                             ),
                                                             Text(
-                                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['savingsFee'])}',
+                                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['savingsFee'])}',
                                                               style:
                                                                   const TextStyle(
                                                                 fontFamily:
@@ -985,7 +975,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                               ),
                                                             ),
                                                             Text(
-                                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['netProceed'])}',
+                                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['netProceed'])}',
                                                               style:
                                                                   const TextStyle(
                                                                 fontFamily:
@@ -1025,7 +1015,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                               ),
                                                             ),
                                                             Text(
-                                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['serviceFee'])}',
+                                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['serviceFee'])}',
                                                               style:
                                                                   const TextStyle(
                                                                 fontFamily:
@@ -1066,7 +1056,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                               ),
                                                             ),
                                                             Text(
-                                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['insuranceFee'])}',
+                                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['insuranceFee'])}',
                                                               style:
                                                                   const TextStyle(
                                                                 fontFamily:
@@ -1107,7 +1097,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                                                               ),
                                                             ),
                                                             Text(
-                                                              'PHP ${NumberFormat('###,###,###,###.00').format(data[0]['totalDeduction'])}',
+                                                              'PHP ${NumberFormat('###,###,###,##0.00').format(data[0]['totalDeduction'])}',
                                                               style:
                                                                   const TextStyle(
                                                                 fontFamily:
@@ -1230,10 +1220,12 @@ class _LoanTenureViewState extends State<LoanTenureView> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(loanTenure.month.toString()),
-              Text(DateFormat('MMM d, yyyy').format(loanTenure.dueDate)),
+              Text(DateFormat('MMM d, yyyy')
+                  .format(loanTenure.dueDate)
+                  .toUpperCase()),
               Text(loanTenure.payment <= 0
                   ? 'PHP 0'
-                  : 'PHP ${NumberFormat('###,###,###,###.00').format(loanTenure.payment)}')
+                  : 'PHP ${NumberFormat('###,###,###,##0.00').format(loanTenure.payment)}')
             ],
           ),
           const Divider(
@@ -1247,20 +1239,20 @@ class _LoanTenureViewState extends State<LoanTenureView> {
 
   List<DataRow> paymentRow(List<DataLoanTenure> tenure) {
     final ocCy =
-        NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,###.00');
+        NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,##0.00');
     List<DataRow> newList = tenure
         .map((e) => DataRow(cells: [
               DataCell(Center(
                   child: Row(
                 children: [
                   e.status == 'paid'
-                      ? const Icon(
+                      ? Icon(
                           Icons.check_circle,
-                          color: Colors.green,
+                          color: Colors.teal[800],
                         )
                       : Icon(
                           Icons.check_circle,
-                          color: Colors.grey[800],
+                          color: Colors.grey[600],
                         ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -1269,7 +1261,8 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                 ],
               ))),
               DataCell(Center(
-                child: Text(DateFormat('MMM d, yyyy').format(e.dueDate)),
+                child: Text(
+                    DateFormat('MMM d, yyyy').format(e.dueDate).toUpperCase()),
               )),
               DataCell(Center(
                 child: Row(
@@ -1279,7 +1272,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                       padding: const EdgeInsets.only(right: 10),
                       child: Text(e.payment <= 0
                           ? 'PHP 0'
-                          : 'PHP ${NumberFormat('###,###,###,###.00').format(e.payment)}'),
+                          : 'PHP ${NumberFormat('###,###,###,##0.00').format(e.payment)}'),
                     ),
                     IconButton(
                         onPressed: () {
@@ -1306,7 +1299,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             boxShadow: [
               BoxShadow(
                   color: grey4,
@@ -1378,7 +1371,7 @@ class _LoanTenureViewState extends State<LoanTenureView> {
                         children: [
                           TextSpan(
                             text:
-                                'PHP ${NumberFormat('###,###,###,###.00').format(accData.toDouble() * loanTypes.loanBasedValue)}'
+                                'PHP ${NumberFormat('###,###,###,##0.00').format(accData.toDouble() * loanTypes.loanBasedValue)}'
                                     .toUpperCase(),
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,

@@ -27,10 +27,18 @@ class ShowAlertDialog {
           style: alertDialogContent,
         ),
         actions: [
-          ElevatedButton(
-              style: ForTealButton,
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(btnName.toUpperCase()))
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                  style: ForTealButton,
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(
+                    btnName.toUpperCase(),
+                    style: alertDialogBtn,
+                  )),
+            ],
+          )
         ],
       ),
     );
