@@ -23,7 +23,6 @@ var myAppbar = AppBar(
   elevation: 0,
 );
 var defaultBackground = Colors.grey[100];
-
 var myDrawer = Drawer(
   elevation: 3,
   width: 80,

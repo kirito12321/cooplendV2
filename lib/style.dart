@@ -7,6 +7,7 @@ const BodyTextSize = 16.0;
 const SmallTextSize = 12.0;
 
 const String FontNameDefault = 'Montserrat';
+const String FontNamedDef = 'Montserrat';
 
 const TitleTextStyle = TextStyle(
     fontFamily: FontNameDefault,
@@ -74,11 +75,10 @@ const TxtBodyHntTextStyle = TextStyle(
     color: Color.fromRGBO(33, 206, 207, 1));
 
 const dashboardMemberTextStyle = TextStyle(
-    height: 2.0,
     fontFamily: FontNameDefault,
     fontWeight: FontWeight.w900,
     fontStyle: FontStyle.normal,
-    fontSize: MediumTextSize,
+    fontSize: 17,
     color: Color.fromARGB(255, 8, 8, 8));
 
 const TxtBodyHntTextStyle2 = TextStyle(

@@ -1,3 +1,5 @@
+import 'package:ascoop/web_ui/styles/buttonstyle.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:flutter/material.dart';
 
 class ShowAlertDialog {
@@ -16,12 +18,19 @@ class ShowAlertDialog {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(body),
+        title: Text(
+          title,
+          style: alertDialogTtl,
+        ),
+        content: Text(
+          body,
+          style: alertDialogContent,
+        ),
         actions: [
-          OutlinedButton(
+          ElevatedButton(
+              style: ForTealButton,
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text(btnName))
+              child: Text(btnName.toUpperCase()))
         ],
       ),
     );

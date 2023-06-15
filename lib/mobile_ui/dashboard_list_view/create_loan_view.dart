@@ -189,7 +189,7 @@ class _CreateLoanState extends State<CreateLoan> {
                                 keyboardType: TextInputType.number,
                                 enabled: _dropDownValue != null ? true : false,
                                 onChanged: (value) {
-                                  if (value.length == 0) {
+                                  if (value.isNotEmpty) {
                                     setState(() {
                                       amountChecker = true;
                                     });
@@ -288,11 +288,12 @@ class _CreateLoanState extends State<CreateLoan> {
                                           if (int.parse(_noMonths.text) <
                                               minMonths) {
                                             ShowAlertDialog(
-                                                context: context,
-                                                title: 'No Months',
-                                                body:
-                                                    'No should not be less than to the required No. months',
-                                                btnName: 'Okay');
+                                                    context: context,
+                                                    title: 'No Months',
+                                                    body:
+                                                        'No should not be less than to the required No. months',
+                                                    btnName: 'Okay')
+                                                .showAlertDialog();
                                             return;
                                           }
 

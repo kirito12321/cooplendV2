@@ -472,7 +472,7 @@ class _LoanActListState extends State<LoanActList> {
                                                                         .start,
                                                                 children: [
                                                                   const Text(
-                                                                    'PAY PER MONTH',
+                                                                    'PAY THIS MONTH',
                                                                     style:
                                                                         TextStyle(
                                                                       fontFamily:
@@ -488,21 +488,47 @@ class _LoanActListState extends State<LoanActList> {
                                                                           .black,
                                                                     ),
                                                                   ),
-                                                                  Text(
-                                                                    'PHP ${NumberFormat('###,###,###,###.##').format(data[index]['montlyPayment'])}',
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontFamily:
-                                                                          FontNameDefault,
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                  ),
+                                                                  StreamBuilder(
+                                                                      stream: myDb
+                                                                          .collectionGroup(
+                                                                              'tenure')
+                                                                          .where(
+                                                                              'loanId',
+                                                                              isEqualTo: data[index][
+                                                                                  'loanId'])
+                                                                          .where(
+                                                                              'status',
+                                                                              isEqualTo:
+                                                                                  'pending')
+                                                                          .orderBy(
+                                                                              'dueDate')
+                                                                          .snapshots(),
+                                                                      builder:
+                                                                          (context,
+                                                                              tenure) {
+                                                                        try {
+                                                                          if (tenure
+                                                                              .hasError) {
+                                                                            return const Center(child: CircularProgressIndicator());
+                                                                          } else {
+                                                                            switch (tenure.connectionState) {
+                                                                              case ConnectionState.waiting:
+                                                                                return onWait;
+                                                                              default:
+                                                                                return Text(
+                                                                                  'PHP ${NumberFormat('###,###,###,###.##').format(tenure.data!.docs[0]['payment'])}',
+                                                                                  style: const TextStyle(
+                                                                                    fontFamily: FontNameDefault,
+                                                                                    fontSize: 15,
+                                                                                    fontWeight: FontWeight.w700,
+                                                                                    color: Colors.black,
+                                                                                  ),
+                                                                                );
+                                                                            }
+                                                                          }
+                                                                        } catch (e) {}
+                                                                        return Container();
+                                                                      }),
                                                                 ],
                                                               ),
                                                             ],
@@ -604,7 +630,7 @@ class _LoanActListState extends State<LoanActList> {
                                                                       switch (snapshot
                                                                           .connectionState) {
                                                                         case ConnectionState
-                                                                            .waiting:
+                                                                              .waiting:
                                                                           return onWait;
                                                                         default:
                                                                           return Text(

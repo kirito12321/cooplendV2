@@ -62,12 +62,26 @@ TextStyle inputTextStyle = TextStyle(
   fontWeight: FontWeight.w600,
   letterSpacing: 1,
 );
+const TextStyle inputTextStyle1 = TextStyle(
+  fontFamily: FontNameDefault,
+  fontSize: 15,
+  color: Colors.black,
+  fontWeight: FontWeight.w600,
+  letterSpacing: 1,
+);
 const TextStyle headerText = TextStyle(
   fontFamily: FontNameDefault,
   fontSize: 25,
   fontWeight: FontWeight.w800,
   color: Colors.black,
   letterSpacing: 1.5,
+);
+TextStyle txtborderteal = TextStyle(
+  fontFamily: FontNameDefault,
+  fontSize: 14,
+  fontWeight: FontWeight.w700,
+  color: Colors.teal[900],
+  letterSpacing: 1,
 );
 const TextStyle h1 = TextStyle(
     fontFamily: FontNameDefault,
