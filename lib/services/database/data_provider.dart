@@ -115,4 +115,9 @@ abstract class DataProvider {
   Future<CoopInfo?> checkCoopOnlinePay({required String coopId});
 
   Stream<List<DataSubscription>> readAllSubs();
+
+  Future<bool> checkAllowedReloan(
+      {required String coopId, required int requiredMonthLoanPaid});
+
+  Future<void> deleteAllNotifications({required DataUserNotification notif});
 }

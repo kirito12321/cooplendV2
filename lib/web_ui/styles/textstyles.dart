@@ -27,6 +27,13 @@ TextStyle btnForgotTxtStyle = TextStyle(
   fontWeight: FontWeight.w500,
   letterSpacing: .8,
 );
+TextStyle btnForgotTxtStyle1 = TextStyle(
+  fontFamily: FontNameDefault,
+  fontSize: 14,
+  color: Colors.black,
+  fontWeight: FontWeight.w500,
+  letterSpacing: .8,
+);
 
 const TextStyle alertDialogBtn = TextStyle(
   fontFamily: FontNameDefault,
@@ -55,10 +62,24 @@ TextStyle inputHintTxtStyle = TextStyle(
   color: Colors.grey[800],
   letterSpacing: 1,
 );
+TextStyle inputHintTxtStyle1 = TextStyle(
+  fontFamily: FontNameDefault,
+  fontWeight: FontWeight.w500,
+  fontSize: 15,
+  color: Colors.grey[800],
+  letterSpacing: 0.5,
+);
 TextStyle inputTextStyle = TextStyle(
   fontFamily: FontNameDefault,
   fontSize: 15,
   color: Colors.teal[800],
+  fontWeight: FontWeight.w600,
+  letterSpacing: 1,
+);
+const TextStyle inputTextStyle1 = TextStyle(
+  fontFamily: FontNameDefault,
+  fontSize: 15,
+  color: Colors.black,
   fontWeight: FontWeight.w600,
   letterSpacing: 1,
 );
@@ -68,6 +89,13 @@ const TextStyle headerText = TextStyle(
   fontWeight: FontWeight.w800,
   color: Colors.black,
   letterSpacing: 1.5,
+);
+TextStyle txtborderteal = TextStyle(
+  fontFamily: FontNameDefault,
+  fontSize: 14,
+  fontWeight: FontWeight.w700,
+  color: Colors.teal[900],
+  letterSpacing: 1,
 );
 const TextStyle h1 = TextStyle(
     fontFamily: FontNameDefault,
@@ -99,6 +127,12 @@ const TextStyle h5 = TextStyle(
     fontFamily: FontNameDefault,
     fontSize: 15,
     fontWeight: FontWeight.w500,
+    color: Colors.black,
+    letterSpacing: 1);
+const TextStyle h6 = TextStyle(
+    fontFamily: FontNameDefault,
+    fontSize: 13,
+    fontWeight: FontWeight.w700,
     color: Colors.black,
     letterSpacing: 1);
 

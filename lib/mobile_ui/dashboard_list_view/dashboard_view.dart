@@ -7,8 +7,11 @@ import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_cooppage_view.dar
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_homepage_view.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/dashboard_loanpage_view.dart';
 import 'package:ascoop/utilities/show_confirmation_dialog.dart';
+import 'package:ascoop/web_ui/styles/buttonstyle.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 import 'dashboard_notificationpage_view.dart';
 // import 'dart:developer' as devtools show log;
@@ -23,13 +26,40 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  List ico = [
+    const Icon(
+      Feather.monitor,
+      size: 23,
+      color: Colors.black,
+    ),
+    const Icon(
+      Feather.credit_card,
+      size: 23,
+      color: Colors.black,
+    ),
+    const Icon(
+      Feather.bell,
+      size: 23,
+      color: Colors.black,
+    ),
+    Image.asset(
+      'assets/images/logo_only_c.png',
+      color: Colors.black,
+    ),
+  ];
+  List ttl = [
+    'Dashboard',
+    'Loans',
+    'Notifications',
+    'Cooperatives',
+  ];
   int currentTab = 0;
+
   int? numNotif = 0;
   var screens = [
     const DashboardHome(),
     const LoanPage(),
     const DashboardNotification(),
-    const DashboardSettings(),
     const DashboardCoop(),
   ];
 
@@ -37,24 +67,35 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     // Widget currentScreen = DashboardHome();
-    const selectedColor = Color.fromRGBO(29, 204, 246, 1);
-    const unSelectedColor = Colors.white;
+    const selectedColor = Colors.white;
+    const unSelectedColor = Colors.white54;
     return Scaffold(
       // backgroundColor: const Color.fromARGB(255, 27, 138, 115),
       appBar: AppBar(
-        elevation: 8,
-        title: const Text(
-          'Member Dashboard',
-          style: dashboardMemberTextStyle,
+        elevation: 1,
+        title: Row(
+          children: [
+            IconButton(
+              icon: ico[currentTab],
+              onPressed: () {},
+            ),
+            Text(
+              ttl[currentTab],
+              style: dashboardMemberTextStyle,
+            ),
+          ],
         ),
         backgroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Image(
-                image: AssetImage('assets/images/cooplendlogo.png')),
-            padding: const EdgeInsets.all(2.0),
-            iconSize: screenWidth * 0.4,
-            onPressed: () {},
+          Transform.scale(
+            scale: 0.8,
+            child: IconButton(
+              icon: const Image(
+                  image: AssetImage('assets/images/cooplendlogo.png')),
+              padding: const EdgeInsets.all(2.0),
+              iconSize: screenWidth * 0.35,
+              onPressed: () {},
+            ),
           )
         ],
       ),
@@ -63,7 +104,7 @@ class _DashboardState extends State<Dashboard> {
         onPressed: () {
           setState(() {
             // currentScreen = const DashboardCoop();
-            currentTab = 4;
+            currentTab = 3;
           });
         },
         child: const Image(
@@ -73,11 +114,11 @@ class _DashboardState extends State<Dashboard> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        color: Colors.teal[600],
+        color: Colors.teal[800],
         shape: const CircularNotchedRectangle(),
         notchMargin: 10,
         child: SizedBox(
-          height: 60,
+          height: 65,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -98,11 +139,13 @@ class _DashboardState extends State<Dashboard> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.home_outlined,
+                            Feather.home,
                             color: currentTab == 0
                                 ? selectedColor
                                 : unSelectedColor,
                           ),
+                          const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2)),
                           Text(
                             'Dashboard',
                             style: TextStyle(
@@ -125,11 +168,13 @@ class _DashboardState extends State<Dashboard> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.list_alt_outlined,
+                            Feather.credit_card,
                             color: currentTab == 1
                                 ? selectedColor
                                 : unSelectedColor,
                           ),
+                          const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2)),
                           Text(
                             'Loans',
                             style: TextStyle(
@@ -171,35 +216,38 @@ class _DashboardState extends State<Dashboard> {
                                         badgeAnimation:
                                             const badges.BadgeAnimation.fade(
                                                 animationDuration: Duration(
-                                                    milliseconds: 5000),
+                                                    milliseconds: 1000),
                                                 loopAnimation: false),
-                                        badgeContent: notif.length > 10
+                                        badgeContent: notif.length > 100
                                             ? const Text(
-                                                '10+',
+                                                '99+',
                                                 style: TextStyle(
-                                                    color: Colors.white),
+                                                    color: Colors.white,
+                                                    fontSize: 10),
                                               )
                                             : Text(
                                                 notif.length.toString(),
                                                 style: const TextStyle(
-                                                    color: Colors.white),
+                                                    color: Colors.white,
+                                                    fontSize: 10),
                                               ),
                                         child: Icon(
-                                          Icons.notifications_outlined,
+                                          Feather.bell,
                                           color: currentTab == 2
                                               ? selectedColor
                                               : unSelectedColor,
                                         ),
                                       )
                                     : Icon(
-                                        Icons.notifications_outlined,
+                                        Feather.bell,
                                         color: currentTab == 2
                                             ? selectedColor
                                             : unSelectedColor,
                                       );
                               } else if (snapshot.hasError) {
-                                return Text(
+                                print(
                                     'there is something error! ${snapshot.hasError.toString()}');
+                                return Container();
                               } else {
                                 return const Center(
                                     child: CircularProgressIndicator());
@@ -229,6 +277,8 @@ class _DashboardState extends State<Dashboard> {
                           //             ? selectedColor
                           //             : unSelectedColor,
                           //       ),
+                          const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2)),
                           Text(
                             'Notifications',
                             style: TextStyle(
@@ -242,34 +292,61 @@ class _DashboardState extends State<Dashboard> {
                     MaterialButton(
                       minWidth: 40,
                       onPressed: () {
-                        ShowConfirmationDialog(
-                                context: context,
-                                title: 'Logout Confirmation',
-                                body: 'Are you sure you want to logout?',
-                                fBtnName: 'Yes',
-                                sBtnName: 'No')
-                            .showConfirmationDialog()
-                            .then((value) {
-                          if (value!) {
-                            AuthService.firebase().logOut().then((value) =>
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/login/', (route) => false));
-                          }
-                        });
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Logout Confirmation',
+                                style: alertDialogTtl,
+                              ),
+                              content: Text(
+                                'Are you sure you want to logout?',
+                                style: alertDialogContent,
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  style: ForRedButton,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'No',
+                                      style: alertDialogBtn,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await AuthService.firebase().logOut().then(
+                                        (value) => Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                                '/login/', (route) => false));
+                                  },
+                                  style: ForTealButton,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Yes',
+                                      style: alertDialogBtn,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.logout_outlined,
-                              color: currentTab == 3
-                                  ? selectedColor
-                                  : unSelectedColor),
+                          Icon(Feather.log_out, color: unSelectedColor),
+                          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                           Text(
                             'Logout',
-                            style: TextStyle(
-                                color: currentTab == 3
-                                    ? selectedColor
-                                    : unSelectedColor),
+                            style: TextStyle(color: unSelectedColor),
                           )
                         ],
                       ),

@@ -1,4 +1,5 @@
 import 'package:ascoop/services/database/data_loan.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 // import 'package:math_expressions/math_expressions.dart';
@@ -7,7 +8,7 @@ class ShowLoanInfoDialog {
   final BuildContext context;
   final DataLoan loan;
   final ocCy =
-      NumberFormat.currency(decimalDigits: 2, customPattern: '#,###,###.00');
+      NumberFormat.currency(decimalDigits: 2, customPattern: '###,###,##0.00');
   ShowLoanInfoDialog({required this.context, required this.loan});
 
   Future<bool?> showLoanDataDialog() async {
@@ -20,7 +21,10 @@ class ShowLoanInfoDialog {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                child: Text('Loan Code: ${loan.loanId}'),
+                child: Text(
+                  'LOAN NO.: ${loan.loanId}',
+                  style: h3,
+                ),
               ),
             ),
             Padding(

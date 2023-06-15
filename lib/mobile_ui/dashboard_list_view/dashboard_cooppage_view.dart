@@ -1,6 +1,9 @@
 import 'package:ascoop/services/database/data_coop.dart';
 import 'package:ascoop/services/database/data_service.dart';
 import 'package:ascoop/mobile_ui/dashboard_list_view/coop_profile_page.dart';
+import 'package:ascoop/style.dart';
+import 'package:ascoop/web_ui/constants.dart';
+import 'package:ascoop/web_ui/styles/textstyles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
@@ -23,45 +26,25 @@ class _DashboardCoopState extends State<DashboardCoop> {
       children: [
         Expanded(
           child: Container(
+            margin: const EdgeInsets.only(top: 8),
             decoration: const BoxDecoration(
               color: Colors.white,
             ),
-            child: Padding(
-              padding: EdgeInsets.only(
-                  top: screenHeight * 0.04,
-                  bottom: screenHeight * 0.04,
-                  left: screenWidth * 0.06,
-                  right: screenWidth * 0.06),
-              child: PhysicalModel(
-                color: Colors.white,
-                elevation: 8,
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                child: Container(
-                  margin: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-
-                      // color: Color.fromARGB(153, 237, 241, 242),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  child: Center(
-                      child: StreamBuilder<List<CoopInfo>>(
-                    stream: DataService.database().readCoopsData(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final coops = snapshot.data!;
-                        return ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            itemCount: coops.length,
-                            itemBuilder: (context, index) =>
-                                buildCoop(coops[index]));
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  )),
-                ),
-              ),
-            ),
+            child: Center(
+                child: StreamBuilder<List<CoopInfo>>(
+              stream: DataService.database().readCoopsData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final coops = snapshot.data!;
+                  return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: coops.length,
+                      itemBuilder: (context, index) => buildCoop(coops[index]));
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            )),
           ),
         ),
       ],
@@ -70,33 +53,54 @@ class _DashboardCoopState extends State<DashboardCoop> {
 
   Widget buildCoop(CoopInfo coopInfo) => Column(
         children: [
-          ListTile(
-            leading: ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: coopInfo.profilePic,
-                width: 60.0,
-                height: 60.0,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+          Container(
+            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: grey4,
+                      spreadRadius: 0.2,
+                      blurStyle: BlurStyle.normal,
+                      blurRadius: 1.6),
+                ],
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: ListTile(
+              leading: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: coopInfo.profilePic,
+                  width: 60.0,
+                  height: 60.0,
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
               ),
+              title: Text(
+                coopInfo.coopName,
+                style: h4,
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  coopInfo.coopAddress,
+                  style: TextStyle(
+                    fontFamily: FontNamedDef,
+                    fontSize: 11,
+                    color: grey4,
+                  ),
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CoopProfile(coopID: coopInfo.coopID)));
+              },
             ),
-            title: Text(coopInfo.coopName),
-            subtitle: Text(coopInfo.coopAddress),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          CoopProfile(coopID: coopInfo.coopID)));
-            },
-          ),
-          const Divider(
-            color: Color.fromARGB(255, 19, 13, 13), //color of divider
-            height: 20, //height spacing of divider
-            thickness: 1, //thickness of divier line
-            indent: 0, //spacing at the start of divider
-            endIndent: 0, //spacing at the end of divider
           ),
         ],
       );

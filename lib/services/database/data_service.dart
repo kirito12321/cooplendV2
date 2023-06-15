@@ -207,4 +207,14 @@ class DataService implements DataProvider {
   Stream<List<DataCapitalShareHistory>> getSavingsHistory(
           {required String coopId, required String userId}) =>
       provider.getSavingsHistory(coopId: coopId, userId: userId);
+
+  @override
+  Future<bool> checkAllowedReloan(
+          {required String coopId, required int requiredMonthLoanPaid}) =>
+      provider.checkAllowedReloan(
+          coopId: coopId, requiredMonthLoanPaid: requiredMonthLoanPaid);
+
+  @override
+  Future<void> deleteAllNotifications({required DataUserNotification notif}) =>
+      provider.deleteAllNotifications(notif: notif);
 }
